@@ -109,3 +109,10 @@ body.panel{
     font-size: 18px;
     color: #2c3e50;
 }
+
+.tabla-sensor {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    font-family: sans-serif;
+}
