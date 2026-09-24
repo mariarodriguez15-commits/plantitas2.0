@@ -81,7 +81,7 @@ p {
     align-items: center;
 }
 
-header {
+.header {
     background-color: 06402B;
     color: green;
     padding: 15px 30px;
