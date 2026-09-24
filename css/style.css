@@ -64,8 +64,10 @@ p {
     margin-top: 1rem;
 }
 
-boddy .panel{
+body.panel{
     margin:0;
+    display: block;
+    min-heigth: auto;
 }
 
 .Contenedores {
