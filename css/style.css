@@ -80,3 +80,12 @@ p {
     border-radius: 5px;
     align-items: center;
 }
+
+header {
+    background-color: 06402B;
+    color: green;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-item: center;
+}
