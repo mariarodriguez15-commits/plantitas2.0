@@ -68,7 +68,7 @@ p {
     background-color: #f0f0f0;
     margin: 20px;
     border: 2px solid #333;
-    color: 333;
+    color: #333;
 }
 
 .filtros {
@@ -78,11 +78,11 @@ p {
     background: white;
     padding: 15px;
     border-radius: 5px;
-    align-items: center;
+    align-item: center;
 }
 
 .header {
-    background-color: 06402B;
+    background-color: #06402B;
     color: green;
     padding: 15px 30px;
     display: flex;
