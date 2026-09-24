@@ -64,6 +64,10 @@ p {
     margin-top: 1rem;
 }
 
+boddy .panel{
+    margin:0;
+}
+
 .Contenedores {
     background-color: #f0f0f0;
     margin: 20px;
