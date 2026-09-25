@@ -1,7 +1,7 @@
-### Nombre del proyecto: <nombre>
+### Nombre del proyecto: <CultivaWeb>
 ### Integrantes: Mara Jose Rodriguez, Diego Sanchez, Bastian Araneda
 
-Invernadero
+### Invernadero
 Sistema web para gestionar un invernadero, permitiendo administrar cultivos, sensores y los datos recolectados por estos. Cada usuario puede administrar su propio invernadero y visualizar información histórica proveniente de sus sensores.
 
 ### Estructura del proyecto
