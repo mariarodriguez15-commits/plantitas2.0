@@ -24,15 +24,29 @@
       </select>
     </div>
 
-    <div id="seccionCultivoNuevo" class="seccion-N">
-      <h2>Agregar cultivo nuevo</h2>
-      <form id="formCultivoNuevo" class="form-red">
+    <div class="section-box">
+      <h2>Agregar sensor al cultivo seleccionado</h2>
+      <form id="formAgregarSensor" class="form-red">
         <div class="form-group">
-          <label for="nombreCultivoNuevo">Nombre del cultivo nuevo:</label>
-          <input type="text" id="nombreCultivoNuevo" placeholder="Ejemplo: cultivo de palta" required>
+          <label for="nombreSensor">Nombre del Sensor:</label>
+          <input type="text" id="nombreSensor" placeholder="Ej: Sensor 1" required>
         </div>
-        <button type="submit" class="btn-action">Guardar cultivo</button>
-        <button type="button" id="btnCancelarCultivo" class="btn-action">Cancelar</button>
+
+      <div class="form-group">
+        <label for="tipoSensor">Tipo de sensor:</label>
+        <input type="text" id="tipoSensor" placeholder="Ej: Humedad" required>
+      </div>
+
+      <div class="form-group">
+        <label for="estadoSensor">Estado:</label>
+        <select id="estadoSensor">
+          <option value="Activo">Activo</option>
+          <option value="Desconectado">Desconectado</option>
+          <option value="Alerta">Alerta</option>
+          <option value="Mantenimiento">Mantenimiento</option>
+        </select>
+      </div>
+      <button type="submit" class="btn-action">Agregar Sensor</button>
       </form>
     </div>
     
