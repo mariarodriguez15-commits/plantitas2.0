@@ -4,19 +4,6 @@
 ### Invernadero
 Sistema web para gestionar un invernadero, permitiendo administrar cultivos, sensores y los datos recolectados por estos. Cada usuario puede administrar su propio invernadero y visualizar información histórica proveniente de sus sensores.
 
-### Estructura del proyecto
-
-proyecto-semestral/
-├── index.html          # Vista de inicio de sesión (login)
-├── registro.html        # Vista de registro de usuario
-├── dashboard.html        # Panel principal tras iniciar sesión
-├── cultivos.html         # Gestión de cultivos
-├── css/
-│   └── style.css        # Estilos generales del proyecto
-├── js/
-│   └── script.js         # Interacciones
-└── README.md
-
 ### Como ejecutarlo
 
 1.- Descargar el repositorio.
