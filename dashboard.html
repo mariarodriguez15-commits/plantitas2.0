@@ -23,32 +23,53 @@
         <option value="Cultivo2">Cultivo de Ají</option>
       </select>
     </div>
+
+    <div class="section-box">
+      <h2>Agregar sensor al cultivo seleccionado</h2>
+      <form id="formAgregarSensor" class="form-red">
+        <div class="form-group">
+          <label for="nombreSensor">Nombre del Sensor:</label>
+          <input type="text" id="nombreSensor" placeholder="Ej: Sensor 1" required>
+        </div>
+
+      <div class="form-group">
+        <label for="tipoSensor">Tipo de sensor:</label>
+        <input type="text" id="tipoSensor" placeholder="Ej: Humedad" required>
+      </div>
+
+      <div class="form-group">
+        <label for="estadoSensor">Estado:</label>
+        <select id="estadoSensor">
+          <option value="Activo">Activo</option>
+          <option value="Desconectado">Desconectado</option>
+          <option value="Alerta">Alerta</option>
+          <option value="Mantenimiento">Mantenimiento</option>
+        </select>
+      </div>
+      <button type="submit" class="btn-action">Agregar Sensor</button>
+      </form>
+    </div>
+    
   </div>
 
   <div class="section-box">
-    <h2>Sensores</h2>
-    <table class="tabla-sensor">
-      <thead>
-        <tr>
-          <th>Sensor</th>
-          <th>Tipo</th>
-          <th>Estado</th>
-        </tr>
-        </thead>
-<!-- Ejemplo -->
-      <tbody>
-        <tr>
-          <td>Sensor 1</td>
-          <td>Termico</td>
-          <td>Activo</td>
-        </tr>
-        <tr>
-          <td>Sensor 2</td>
-          <td>Humedad</td>
-          <td>Desconectado</td>
-        </tr>
-        </tbody>
-    </table>
+    <div class="section-box-header">
+      <h2>Sensores</h2>
+    </div
+      
+    <div class="table-responsive">
+      <table class="tabla-sensor">
+        <thead>
+          <tr>
+            <th>Sensor</th>
+            <th>Tipo</th>
+            <th>Estado</th>
+          </tr>
+          </thead>
+        <tbody id="cuerpoTablaSensores">
+            </tbody>
+      </table>
+    </div>
   </div>
 
 
