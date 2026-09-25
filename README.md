@@ -14,7 +14,7 @@ proyecto-semestral/
 ├── css/
 │   └── style.css        # Estilos generales del proyecto
 ├── js/
-│   └── script.js         # Interacciones del dashboard
+│   └── script.js         # Interacciones
 └── README.md
 
 ### Como ejecutarlo
