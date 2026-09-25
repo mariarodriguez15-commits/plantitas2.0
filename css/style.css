@@ -100,7 +100,6 @@ body.panel{
 .section-box {
     background-color: white;
     padding: 20px;
-    border:1px solid #000000;
     border-radius: 5px;
     margin-bottom: 20px;
 }
@@ -113,15 +112,17 @@ body.panel{
 
 .tabla-sensor {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 8px;
     border: 1px solid #000000;
     margin-top: 15px;
     font-family: sans-serif;
 }
 
 .tabla-sensor th td {
+    background-color: white;
     padding: 10px 15px;
-    text-align: left;
+    text-align: center;
     border: 1px solid #000000;
     border-bottom: 1px solid #ddd;
 }
