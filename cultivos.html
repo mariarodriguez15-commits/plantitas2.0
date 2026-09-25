@@ -3,9 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vista cultivos</title>
+    <title>Cultivos - Proyecto semestral</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
-    
+<body class="panel">
+    <header class="header">
+        <h1>Mis Cultivos</h1>
+        <a href="dashboard.html"><button>Volver al Panel</button></a>
+    </header>
+
+    <section class="section-box">
+        <h2>Listado de Cultivos</h2>
+        <table class="tabla-sensor">
+            <thead>
+                <tr>
+                    <th>Cultivo</th>
+                    <th>Tipo</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Cultivo 1</td>
+                    <td>Maíz</td>
+                    <td>En crecimiento</td>
+                </tr>
+                <tr>
+                    <td>Cultivo 2</td>
+                    <td>Ají</td>
+                    <td>Listo para cosecha</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section class="section-box">
+        <h2>Agregar Nuevo Cultivo</h2>
+        <form id="formCultivo">
+            <label for="nombreCultivo">Nombre</label>
+            <input type="text" id="nombreCultivo" name="nombreCultivo" required>
+
+            <label for="tipoCultivo">Tipo</label>
+            <input type="text" id="tipoCultivo" name="tipoCultivo" required>
+
+            <button type="submit">Agregar</button>
+        </form>
+    </section>
+
+    <script src="js/script.js" defer></script>
 </body>
 </html>
