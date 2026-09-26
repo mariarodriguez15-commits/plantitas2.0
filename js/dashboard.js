@@ -24,22 +24,6 @@ const datosCultivos = {
 
     const sensores = datosCultivos[cultivoSeleccionado];
 
-    cuerpoTabla.innerHTML = "";
-
-    if (sensores.length === 0) {
-      cuerpoTabla.innerHTML = `
-        <tr>
-          <td colspan="3">
-            No hay sensores registrados para este cultivo.
-          </td>
-        </tr>
-      `;
-      if (infoCount) {
-        infoCount.textContent = "0 sensores";
-      }
-      return;
-    }
-
     sensores.forEach((sensor) => {
       const fila = document.createElement("tr");
       fila.innerHTML = `
