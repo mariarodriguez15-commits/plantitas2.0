@@ -1,26 +1,33 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar sesión - CultivaWeb</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <main>
-        <h1>Iniciar Sesión</h1>
-        <form id="formLogin" action="dashboard.html" method="get">
-            <label for="correo">Correo</label>
-            <input type="email" id="correo" name="correo" required>
+<body class="min-h-screen flex items-center justify-center bg-emerald-50 px-4">
+  <main class="w-full max-w-md rounded-2xl bg-white p-6 shadow-md">
+    <h1 class="text-center text-2xl font-bold text-emerald-800">Iniciar sesión</h1>
 
-            <label for="clave">Contraseña</label>
-            <input type="password" id="clave" name="clave" minlength="8" required>
+    <form id="formLogin" action="dashboard.html" method="get" class="mt-6 flex flex-col">
+      <label for="correo" class="text-sm font-medium text-slate-700">Correo</label>
+      <input type="email" id="correo" name="correo" required
+             class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500">
 
-            <button type="submit">Ingresar</button>
-        </form>
-        <p>¿No tienes cuenta? <a href="registro.html">Regístrate aquí</a></p>
-    </main>
+      <label for="clave" class="mt-4 text-sm font-medium text-slate-700">Contraseña</label>
+      <input type="password" id="clave" name="clave" minlength="8" required
+             class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500">
 
-    <script src="js/script.js" defer></script>
+      <button type="submit"
+              class="mt-6 rounded-lg bg-emerald-600 py-2 text-white transition hover:bg-emerald-700 disabled:opacity-50">
+        Ingresar
+      </button>
+    </form>
+
+    <p class="mt-4 text-center text-sm text-slate-600">
+      ¿No tienes cuenta? <a href="registro.html" class="text-emerald-700 underline">Regístrate aquí</a>
+    </p>
+  </main>
 </body>
 </html>
