@@ -126,3 +126,31 @@ body.panel{
     border: 1px solid #000000;
     border-bottom: 1px solid #ddd;
 }
+
+.badge-estado {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.estado-activo {
+  background-color: #d1fae5;
+  color: #065f46; /* Verde */
+}
+
+.estado-desconectado {
+  background-color: #f3f4f6;
+  color: #4b5563; /* Gris */
+}
+
+.estado-alerta {
+  background-color: #fee2e2;
+  color: #991b1b; /* Rojo */
+}
+
+.estado-mantenimiento {
+  background-color: #fef3c7;
+  color: #92400e;
+}

@@ -15,7 +15,7 @@ const datosCultivos = {
 
   function renderizarTabla() {
     if (!selectCultivo || !cuerpoTabla) return;
-
+        cuerpoTabla.innerHTML = "";
     const cultivoSeleccionado = selectCultivo.value;
     
     if (!datosCultivos[cultivoSeleccionado]) {
@@ -26,6 +26,8 @@ const datosCultivos = {
 
     sensores.forEach((sensor) => {
       const fila = document.createElement("tr");
+        const claseEstado = `estado-${sensor.estado.toLowerCase()}`;
+        
       fila.innerHTML = `
         <td>${sensor.nombre}</td>
         <td>${sensor.tipo}</td>
