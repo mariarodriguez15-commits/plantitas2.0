@@ -1,32 +1,41 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro</title>
-    <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crear cuenta - CultivaWeb</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <main>
-        <h1>Crear Cuenta</h1>
-        <form id="formRegistro" action="#" method="post">
-            <label for="nombre">Nombre</label>
-            <input type="text" id="nombre" name="nombre" required>
+<body class="min-h-screen flex items-center justify-center bg-emerald-50 px-4 py-8">
+  <main class="w-full max-w-md rounded-2xl bg-white p-6 shadow-md">
+    <h1 class="text-center text-2xl font-bold text-emerald-800">Crear cuenta</h1>
 
-            <label for="correo">Correo</label>
-            <input type="email" id="correo" name="correo" required>
+    <form id="formRegistro" action="#" method="post" class="mt-6 flex flex-col">
+      <label for="nombre" class="text-sm font-medium text-slate-700">Nombre</label>
+      <input type="text" id="nombre" name="nombre" required
+             class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500">
 
-            <label for="clave">Contraseña</label>
-            <input type="password" id="clave" name="clave" minlength="8" required>
+      <label for="correo" class="mt-4 text-sm font-medium text-slate-700">Correo</label>
+      <input type="email" id="correo" name="correo" required
+             class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500">
 
-            <label for="confirmarClave">Confirmar Contraseña</label>
-            <input type="password" id="confirmarClave" name="confirmarClave" minlength="8" required>
+      <label for="clave" class="mt-4 text-sm font-medium text-slate-700">Contraseña</label>
+      <input type="password" id="clave" name="clave" minlength="8" required
+             class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500">
 
-            <button type="submit">Registrarse</button>
-        </form>
-        <p>¿Ya tienes cuenta? <a href="index.html">Inicia sesión aquí</a></p>
-    </main>
+      <label for="confirmarClave" class="mt-4 text-sm font-medium text-slate-700">Confirmar contraseña</label>
+      <input type="password" id="confirmarClave" name="confirmarClave" minlength="8" required
+             class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500">
 
-    <script src="js/script.js" defer></script>
+      <button type="submit"
+              class="mt-6 rounded-lg bg-emerald-600 py-2 text-white transition hover:bg-emerald-700 disabled:opacity-50">
+        Registrarse
+      </button>
+    </form>
+
+    <p class="mt-4 text-center text-sm text-slate-600">
+      ¿Ya tienes cuenta? <a href="index.html" class="text-emerald-700 underline">Inicia sesión aquí</a>
+    </p>
+  </main>
 </body>
 </html>
