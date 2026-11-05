@@ -1,0 +1,19 @@
+[
+
+  {
+    "id": 1,
+    "nombre": "Admin",
+    "correo": "admin@cultivaweb.cl",
+    "clave": "admin321321",
+    "rol": "admin"
+  },
+
+ {
+    "id": 2,
+    "nombre": "Prueba",
+    "correo": "prueba@cultivaweb.cl",
+    "clave": "prueba321",
+    "rol": "usuario"
+  }
+
+]
