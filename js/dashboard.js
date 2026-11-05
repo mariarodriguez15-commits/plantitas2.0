@@ -28,11 +28,11 @@ const datosCultivos = {
       const fila = document.createElement("tr");
         const claseEstado = `estado-${sensor.estado.toLowerCase()}`;
         
-      fila.innerHTML = `
+    fila.innerHTML = `
         <td>${sensor.nombre}</td>
         <td>${sensor.tipo}</td>
-        <td><span class="badge-estado">${sensor.estado}</span></td>
-      `;
+        <td><span class="badge-estado ${claseEstado}">${sensor.estado}</span></td>
+    `;
       cuerpoTabla.appendChild(fila);
     });
 
