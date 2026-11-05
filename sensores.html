@@ -35,63 +35,87 @@
     </div>
   </header>
 
-  <div class="Contenedores">
-    <div class="filtros">
-      <label>Cultivo</label>
-      <select id="Cultivo">
-        <option value="Cultivo1">Cultivo de Maiz</option>
-        <option value="Cultivo2">Cultivo de Ají</option>
-      </select>
-    </div>
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
 
-    <div class="section-box">
-      <h2>Agregar sensor al cultivo seleccionado</h2>
-      <form id="formAgregarSensor" class="form-red">
-        <div class="form-group">
-          <label for="nombreSensor">Nombre del Sensor:</label>
-          <input type="text" id="nombreSensor" placeholder="Ej: Sensor 1" required>
+    <section class="bg-white  p-6 border border-slate-500">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h2 class="text-xl font-bold text-slate-900">Seleccione el cultivo</h2>
+          <p class="text-sm text-slate-500 mt-0.5">Selecciona el cultivo a supervisar.</p>
+        </div>
+        <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+          <label for="Cultivo" class="text-sm font-semibold text-slate-700">Cultivo seleccionado:</label>
+          <select id="Cultivo"
+                  class=" border border-slate-400 bg-white px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
+            <option value="Cultivo1">Cultivo de Maíz</option>
+            <option value="Cultivo2">Cultivo de Ají</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-white p-4  border border-slate-500 lg:col-span-1">
+      <h3 class="text-xl font-bold text-slate-900 mb-4">Agregar Sensor</h3>
+      
+      <form id="formAgregarSensor" class="space-y-4">
+        <div>
+          <label for="nombreSensor" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
+            Identificador
+          </label>
+          <input type="text" id="nombreSensor" class="w-full  border border-slate-400 px-3.5 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
+        </div>
+        <div>
+          <label for="tipoSensor" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
+            Tipo de Medición
+          </label>
+          <input type="text" id="tipoSensor" class="w-full  border border-slate-400 px-3.5 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
         </div>
 
-      <div class="form-group">
-        <label for="tipoSensor">Tipo de sensor:</label>
-        <input type="text" id="tipoSensor" placeholder="Ej: Humedad" required>
-      </div>
+        <div>
+          <label for="estadoSensor" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
+            Estado 
+          </label>
+          <select id="estadoSensor" class="w-full border border-slate-400 bg-white px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
+            <option value="Activo">Activo</option>
+            <option value="Desconectado">Desconectado</option>
+            <option value="Alerta">Alerta</option>
+            <option value="Mantenimiento">Mantenimiento</option>
+          </select>
+        </div>
 
-      <div class="form-group">
-        <label for="estadoSensor">Estado:</label>
-        <select id="estadoSensor">
-          <option value="Activo">Activo</option>
-          <option value="Desconectado">Desconectado</option>
-          <option value="Alerta">Alerta</option>
-          <option value="Mantenimiento">Mantenimiento</option>
-        </select>
-      </div>
-      <button type="submit" class="btn-action">Agregar Sensor</button>
+        <button type="submit" class="w-full mt-2 bg-emerald-800 hover:bg-emerald-700 active:scale-[0.99] text-white font-medium py-2.5 px-4 text-sm transition duration-150 shadow-sm cursor-pointer disabled:opacity-50">
+          Registrar sensor
+        </button>
       </form>
-    </div>
-    
-  </div>
+    </section>
 
-  <div class="section-box">
-    <div class="section-box-header">
-      <h2>Sensores</h2>
-      <span id="InfoSensorCount" class="badge-count">0 sensor(es)</span>
-    </div>
-      
-    <div class="table-responsive">
-      <table class="tabla-sensor">
-        <thead>
-          <tr>
-            <th>Sensor</th>
-            <th>Tipo</th>
-            <th>Estado</th>
-          </tr>
+    <section class="bg-white border border-slate-500 overflow-hidden lg:col-span-2">
+      <div class="p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-slate-100">
+        <div>
+          <h3 class="text-2xl font-bold text-slate-900">Sensores del Cultivo</h3>
+          <p class="text-xs text-slate-500 mt-0.5">Condiciones actuales</p>
+        </div>
+        <span id="InfoSensorCount" class="inline-flex items-center self-start sm:self-auto px-3 py-1  text-2xs font-bold text-emerald-800">
+            0 sensor(es)
+        </span>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm text-slate-600">
+          <thead class="bg-slate-50 text-xs uppercase font-bold text-slate-500 border-b border-slate-200">
+            <tr>
+              <th scope="col" class="px-6 py-3.5">Sensor</th>
+              <th scope="col" class="px-6 py-3.5">Tipo</th>
+              <th scope="col" class="px-6 py-3.5 text-center">Estado</th>
+            </tr>
           </thead>
-        <tbody id="cuerpoTablaSensores">
-            </tbody>
-      </table>
-    </div>
-  </div>
+            
+          <tbody id="cuerpoTablaSensores" class="divide-y divide-slate-100"></tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
 
 
       
