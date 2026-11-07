@@ -4,18 +4,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cultivos</title>
-    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="panel">
-    <header class="header">
-        <h1>Mis Cultivos</h1>
-        <a href="sensores.html"><button>Volver al Panel</button></a>
-    </header>
+<body class="bg-white text-slate-800 font-sans antialiased min-h-screen flex flex-col">
+    <header class="bg-emerald-900 text-white shadow-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
 
-    <section class="section-box">
-        <h2>Listado de Cultivos</h2>
-        <table class="tabla-sensor">
-            <thead>
+        <h1 class="text-2xl font-bold tracking-wide text-white leading-none">CultivaWeb</h1>
+
+        <nav class="hidden md:flex items-center gap-2">
+          <a href="panel.html" class="px-3.5 py-2  text-sm font-semibold bg-emerald-800 text-white shadow-inner">
+              Panel principal
+            </a>
+
+          <a href="cultivos.html" class="px-3.5 py-2 text-sm font-medium text-white bg-emerald-800 hover:text-emerald-100 transition">
+              Cultivos
+            </a>
+
+          <a href="sensores.html" aria-current="page" class="px-3.5 py-2 text-sm font-semibold bg-emerald-800 text-white shadow-inner">
+              Sensores
+            </a>
+
+          <a href="index.html" class="px-3.5 py-2 text-sm font-medium text-red-200 hover:bg-red-900/40 hover:text-white transition">
+              Cerrar Sesión
+            </a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="bg-white-100 p-6 border-4 rounded-lg mx-96 flex flex-col m-4 ">
+        <h2 class="bg-emerald-900 text-slate-200 text-center m-2 text-2xl rounded-sm g-2">Agregar Nuevo Cultivo</h2>
+        <form class=" bg-white-200 ">
+            <label for="nombreCultivo">Nombre</label>
+            <input type="text" id="nombreCultivo" name="nombreCultivo" required>
+
+            <label for="tipoCultivo">Tipo</label>
+            <input type="text" id="tipoCultivo" name="tipoCultivo" required>
+
+            <button type="submit">Agregar</button>
+        </form>
+    </section>
+    
+    <section class="bg-white-100 p-6 border-4 rounded-lg mx-96 flex flex-col m-4 gap gap-4 ">
+        <h2 class="bg-emerald-900 text-slate-200 text-4xl mx-auto top-0 text-center rounded-sm p-6 shadow-md">Listado de Cultivos</h2>
+        <table class="bg-slate-200 text-2xl text-center rounded-lg">
+            <thead class="text-2xl">
                 <tr>
                     <th>Cultivo</th>
                     <th>Tipo</th>
@@ -36,20 +70,7 @@
             </tbody>
         </table>
     </section>
-
-    <section class="section-box">
-        <h2>Agregar Nuevo Cultivo</h2>
-        <form id="formCultivo">
-            <label for="nombreCultivo">Nombre</label>
-            <input type="text" id="nombreCultivo" name="nombreCultivo" required>
-
-            <label for="tipoCultivo">Tipo</label>
-            <input type="text" id="tipoCultivo" name="tipoCultivo" required>
-
-            <button type="submit">Agregar</button>
-        </form>
-    </section>
-
+    
     <script src="js/cultivos.js" defer></script>
 </body>
 </html>
