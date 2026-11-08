@@ -84,8 +84,8 @@
           </select>
         </div>
 
-        <button type="submit" class="w-full mt-2 bg-emerald-800 hover:bg-emerald-700 active:scale-[0.99] text-white font-medium py-2.5 px-4 text-sm transition duration-150 shadow-sm cursor-pointer disabled:opacity-50">
-          Registrar sensor
+        <button type="submit" :disabled="enviando" class="w-full mt-2 bg-emerald-800 hover:bg-emerald-700 active:scale-[0.99] text-white font-medium py-2.5 px-4 text-sm transition duration-150 shadow-sm cursor-pointer disabled:opacity-50">
+          <span x-text="enviando ? 'Guardando sensor...' : '+ Registrar Sensor'"></span>
         </button>
       </form>
     </section>
