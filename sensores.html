@@ -96,8 +96,7 @@
           <h3 class="text-2xl font-bold text-slate-900">Sensores del Cultivo</h3>
           <p class="text-xs text-slate-500 mt-0.5">Condiciones actuales</p>
         </div>
-        <span id="InfoSensorCount" class="inline-flex items-center self-start sm:self-auto px-3 py-1  text-2xs font-bold text-emerald-800">
-            0 sensor(es)
+        <span id="InfoSensorCount" class="inline-flex items-center self-start sm:self-auto px-3 py-1  text-2xs font-bold text-emerald-800" x-text="sensoresFiltrados.length + ' sensor(es)'">
         </span>
       </div>
 
@@ -111,7 +110,25 @@
             </tr>
           </thead>
             
-          <tbody id="cuerpoTablaSensores" class="divide-y divide-slate-100"></tbody>
+          <tbody class="divide-y divide-slate-100">
+            <template x-for="sensor in sensoresFiltrados" :key="sensor.id">
+              <tr class="hover:bg-slate-50/80 transition">
+                  <td class="px-6 py-3.5 font-medium text-slate-900" x-text="sensor.nombre"></td>
+                  <td class="px-6 py-3.5" x-text="sensor.tipo"></td>
+                  <td class="px-6 py-3.5 text-center">
+                    <span class="inline-flex px-2.5 py-0.5 text-xs font-semibold rounded-xl border"
+                          :class="{
+                            'bg-emerald-50 text-emerald-700 border-emerald-200': sensor.estado === 'Activo',
+                            'bg-red-50 text-red-700 border-red-200': sensor.estado === 'Alerta',
+                            'bg-slate-100 text-slate-600 border-slate-200': sensor.estado === 'Desconectado',
+                            'bg-blue-50 text-blue-700 border-blue-200': sensor.estado === 'Mantenimiento'
+                          }"
+                          x-text="sensor.estado">
+                    </span>
+                  </td>
+              </tr>
+            </template>
+          </tbody>
         </table>
       </div>
     </section>
@@ -124,7 +141,49 @@
         cultivosDisponibles: [
           { id: 1, nombre: 'Maíz' },
           { id: 2, nombre: 'Ají' }
-        ]
+        ],
+        nuevoSensor: {
+          nombre: '',
+          tipo: '',
+          estado: 'Activo'
+        },
+        errores: {
+          nombre: '',
+          tipo: ''
+        },
+        enviando: false,
+        initApp() {
+          const guardados = localStorage.getItem('cultivaweb_sensores');
+          if (guardados) {
+            try {
+              this.sensores = JSON.parse(guardados);
+            } catch (e) {
+              console.error('Error parseando sensores locales:', e);
+            }
+          }
+        },
+
+        get sensoresFiltrados() {
+          return this.sensores.filter(s => Number(s.cultivoId) === Number(this.cultivoFiltroId));
+        },
+
+         validarFormulario() {
+          let esValido = true;
+          this.errores = { nombre: '', tipo: '' };
+
+          if (!this.nuevoSensor.nombre) {
+            this.errores.nombre = 'Se requiere el nombre del sensor.';
+            esValido = false;
+          }
+          if (!this.nuevoSensor.tipo) {
+            this.errores.tipo = 'Se requiere el tipo de medición del sensor.';
+            esValido = false;
+          }
+
+          return esValido;
+        },
+
+        
       }));
     });
 
