@@ -152,6 +152,7 @@
           tipo: ''
         },
         enviando: false,
+        
         initApp() {
           const guardados = localStorage.getItem('cultivaweb_sensores');
           if (guardados) {
@@ -167,7 +168,7 @@
           return this.sensores.filter(s => Number(s.cultivoId) === Number(this.cultivoFiltroId));
         },
 
-         validarFormulario() {
+        validarFormulario() {
           let esValido = true;
           this.errores = { nombre: '', tipo: '' };
 
@@ -183,7 +184,28 @@
           return esValido;
         },
 
-        
+        agregarSensor() {
+          if (!this.validarFormulario()) return;
+
+          this.enviando = true;
+          setTimeout(() => {
+            const nuevo = {
+              id: Date.now(),
+              cultivoId: Number(this.cultivoFiltroId),
+              nombre: this.nuevoSensor.nombre,
+              tipo: this.nuevoSensor.tipo,
+              estado: this.nuevoSensor.estado
+            };
+
+            this.sensores.push(nuevo);
+            this.guardarEnStorage();
+          }
+        },
+
+        guardarEnStorage() {
+          localStorage.setItem('cultivaweb_sensores', JSON.stringify(this.sensores));
+        },
+
       }));
     });
 
