@@ -44,7 +44,7 @@
           <p class="text-sm text-slate-500 mt-0.5">Selecciona el cultivo a supervisar o asociar sensores.</p>
         </div>
         <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
-          <label for="nuevoCultivoDestino" class="text-sm font-semibold text-slate-700">Cultivo seleccionado:</label>
+          <label for="cultivoSeleccionado" class="text-sm font-semibold text-slate-700">Cultivo seleccionado:</label>
           <select id="cultivoSeleccionado" x-model.number="cultivoFiltroId"
                   class=" border border-slate-400 bg-white px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
             <template x-for="c in cultivosDisponibles" :key="c.id">
@@ -64,12 +64,14 @@
             Identificador
           </label>
           <input type="text" id="nombreSensor" x-model.trim="nuevoSensor.nombre" placeholder="Ej: Sensor A" required class="w-full  border border-slate-400 px-3.5 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
+          <span x-show="errores.tipo" x-text="errores.tipo" class="text-xs text-red-600 mt-1 block" x-cloak></span>
         </div>
         <div>
           <label for="tipoSensor" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
             Tipo de Medición
           </label>
           <input type="text" id="tipoSensor" x-model.trim="nuevoSensor.tipo" placeholder="Ej: Temperatura" required class="w-full  border border-slate-400 px-3.5 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
+          <span x-show="errores.tipo" x-text="errores.tipo" class="text-xs text-red-600 mt-1 block" x-cloak></span>
         </div>
 
         <div>
@@ -142,6 +144,12 @@
           { id: 1, nombre: 'Maíz' },
           { id: 2, nombre: 'Ají' }
         ],
+       
+        cultivoFiltroId: 1,
+        sensores: [
+          { id: 101, cultivoId: 1, nombre: 'Sensor Humedad A', tipo: 'Humedad', estado: 'Activo' }
+        ],
+      
         nuevoSensor: {
           nombre: '',
           tipo: '',
@@ -195,11 +203,17 @@
               nombre: this.nuevoSensor.nombre,
               tipo: this.nuevoSensor.tipo,
               estado: this.nuevoSensor.estado
+              
             };
 
             this.sensores.push(nuevo);
             this.guardarEnStorage();
-          }
+
+            this.nuevoSensor.nombre = '';
+            this.nuevoSensor.tipo = '';
+            this.nuevoSensor.estado = 'Activo';
+            
+          }, 400);
         },
 
         guardarEnStorage() {
