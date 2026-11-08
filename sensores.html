@@ -33,6 +33,42 @@
             </a>
       </nav>
     </div>
+
+    <div class="flex md:hidden">
+          <button @click="menuAbierto = !menuAbierto" type="button" aria-label="Abrir menú"
+                  class="p-2 rounded-xl text-emerald-200 hover:text-white hover:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-400 ml-auto">
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+        </div>
+
+      <nav x-show="menuAbierto"
+           x-transition:enter="transition ease-out duration-200"
+           x-transition:enter-start="opacity-0 -translate-y-2"
+           x-transition:enter-end="opacity-100 translate-y-0"
+           x-transition:leave="transition ease-in duration-150"
+           x-transition:leave-start="opacity-100 translate-y-0"
+           x-transition:leave-end="opacity-0 -translate-y-2"
+           x-cloak
+           class="md:hidden py-3 border-t border-emerald-800 flex flex-col items-end space-y-1">
+        <a href="panel.html"
+           class="w-full text-right px-4 py-2 text-sm font-semibold text-emerald-100 hover:bg-emerald-800">
+          Inicio
+        </a>
+        <a href="cultivos.html"
+           class="w-full text-right px-4 py-2 text-sm font-semibold text-emerald-100 hover:bg-emerald-800">
+          Cultivos
+        </a>
+        <a href="sensores.html" aria-current="page"
+           class="w-full text-right px-4 py-2 text-sm font-bold bg-emerald-800 text-white">
+          Sensores
+        </a>
+        <a href="index.html"
+           class="w-full text-right px-4 py-2 text-sm font-semibold text-red-300 hover:bg-red-900/50">
+          Cerrar Sesión
+        </a>
+      </nav> 
   </header>
 
   <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
@@ -128,6 +164,11 @@
                           x-text="sensor.estado">
                     </span>
                   </td>
+                  <td class="px-6 py-3.5 text-right">
+                    <button type="button" @click="eliminarSensor(sensor.id)" class="text-xs text-red-600 hover:text-red-800 font-medium cursor-pointer">
+                      Eliminar
+                    </button>
+                  </td>
               </tr>
             </template>
           </tbody>
@@ -219,6 +260,12 @@
         guardarEnStorage() {
           localStorage.setItem('cultivaweb_sensores', JSON.stringify(this.sensores));
         },
+
+        eliminarSensor(id) {
+          this.sensores = this.sensores.filter(s => s.id !== id);
+          this.guardarEnStorage();
+          this.mostrarToast('Sensor eliminado.', 'exito');
+        }
 
       }));
     });
