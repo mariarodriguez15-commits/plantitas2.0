@@ -128,6 +128,11 @@
                           x-text="sensor.estado">
                     </span>
                   </td>
+                  <td class="px-6 py-3.5 text-right">
+                    <button type="button" @click="eliminarSensor(sensor.id)" class="text-xs text-red-600 hover:text-red-800 font-medium cursor-pointer">
+                      Eliminar
+                    </button>
+                  </td>
               </tr>
             </template>
           </tbody>
@@ -219,6 +224,12 @@
         guardarEnStorage() {
           localStorage.setItem('cultivaweb_sensores', JSON.stringify(this.sensores));
         },
+
+        eliminarSensor(id) {
+          this.sensores = this.sensores.filter(s => s.id !== id);
+          this.guardarEnStorage();
+          this.mostrarToast('Sensor eliminado.', 'exito');
+        }
 
       }));
     });
