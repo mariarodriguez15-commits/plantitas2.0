@@ -5,11 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Panel Principal</title>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-  <!--<link rel="stylesheet" href="css/style.css">-->
-<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
 </head>
-<body class="min-h-screen bg-slate-50 text-slate-800 flex flex-col font-rounded antialiased">
+<body class="min-h-screen bg-slate-50 text-slate-800 flex flex-col font-rounded antialiased" x-data="sensoresApp()" x-init="initApp()">
   <header class="bg-emerald-900 text-white shadow-md sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-16">
@@ -42,14 +41,15 @@
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h2 class="text-xl font-bold text-slate-900">Seleccione el cultivo</h2>
-          <p class="text-sm text-slate-500 mt-0.5">Selecciona el cultivo a supervisar.</p>
+          <p class="text-sm text-slate-500 mt-0.5">Selecciona el cultivo a supervisar o asociar sensores.</p>
         </div>
         <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
-          <label for="Cultivo" class="text-sm font-semibold text-slate-700">Cultivo seleccionado:</label>
-          <select id="Cultivo"
+          <label for="nuevoCultivoDestino" class="text-sm font-semibold text-slate-700">Cultivo seleccionado:</label>
+          <select id="cultivoSeleccionado" x-model.number="cultivoFiltroId"
                   class=" border border-slate-400 bg-white px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
-            <option value="Cultivo1">Cultivo de Maíz</option>
-            <option value="Cultivo2">Cultivo de Ají</option>
+            <template x-for="c in cultivosDisponibles" :key="c.id">
+              <option :value="c.id" x-text="c.nombre"></option>
+            </template>
           </select>
         </div>
       </div>
@@ -118,7 +118,16 @@
 
   </main>
 
+  <script>
+    document.addEventListener('alpine:init', () => {
+      Alpine.data('sensoresApp', () => ({
+        cultivosDisponibles: [
+          { id: 1, nombre: 'Maíz' },
+          { id: 2, nombre: 'Ají' }
+        ]
+      }));
+    });
 
-      
-<script src="js/sensores.js" defer></script>
+  </script>
+
 </body>
