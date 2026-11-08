@@ -57,26 +57,26 @@
 
     <section class="bg-white p-4  border border-slate-500 lg:col-span-1">
       <h3 class="text-xl font-bold text-slate-900 mb-4">Agregar Sensor</h3>
-      
-      <form id="formAgregarSensor" class="space-y-4">
+      <form @submit.prevent="agregarSensor" class="space-y-4">
+
         <div>
           <label for="nombreSensor" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
             Identificador
           </label>
-          <input type="text" id="nombreSensor" class="w-full  border border-slate-400 px-3.5 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
+          <input type="text" id="nombreSensor" x-model.trim="nuevoSensor.nombre" placeholder="Ej: Sensor A" required class="w-full  border border-slate-400 px-3.5 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
         </div>
         <div>
           <label for="tipoSensor" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
             Tipo de Medición
           </label>
-          <input type="text" id="tipoSensor" class="w-full  border border-slate-400 px-3.5 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
+          <input type="text" id="tipoSensor" x-model.trim="nuevoSensor.tipo" placeholder="Ej: Temperatura" required class="w-full  border border-slate-400 px-3.5 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
         </div>
 
         <div>
           <label for="estadoSensor" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
             Estado 
           </label>
-          <select id="estadoSensor" class="w-full border border-slate-400 bg-white px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
+          <select id="estadoSensor" x-model="nuevoSensor.estado"  class="w-full border border-slate-400 bg-white px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
             <option value="Activo">Activo</option>
             <option value="Desconectado">Desconectado</option>
             <option value="Alerta">Alerta</option>
