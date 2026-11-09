@@ -7,9 +7,13 @@
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
+  <style> 
+  [x-cloak] { display: none !important; }
+  </style>
+
 </head>
 <body class="min-h-screen bg-slate-50 text-slate-800 flex flex-col font-rounded antialiased" x-data="sensoresApp()" x-init="initApp()">
-  <header class="bg-emerald-900 text-white shadow-md sticky top-0 z-50">
+  <header class="bg-emerald-900 text-white shadow-md sticky top-0 z-50 x-data="{ menuAbierto: false }">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-16">
 
@@ -212,7 +216,9 @@
        
         cultivoFiltroId: 1,
         sensores: [
-          { id: 101, cultivoId: 1, nombre: 'Sensor Humedad A', tipo: 'Humedad', estado: 'Activo' }
+          { id: 1, cultivoId: 1, nombre: 'Sensor B', tipo: 'Humedad de suelo', estado: 'Activo' },
+          { id: 2, cultivoId: 1, nombre: 'Sensor A', tipo: 'Temperatura ambiente', estado: 'Activo' },
+          { id: 3, cultivoId: 2, nombre: 'Sensor C', tipo: 'Medidor pH', estado: 'Alerta' }
         ],
       
         nuevoSensor: {
