@@ -13,7 +13,7 @@
 
 </head>
 <body class="min-h-screen bg-slate-50 text-slate-800 flex flex-col font-rounded antialiased" x-data="sensoresApp()" x-init="initApp()">
-  <header class="bg-emerald-900 text-white shadow-md sticky top-0 z-50 x-data="{ menuAbierto: false }">
+  <header class="bg-emerald-900 text-white shadow-md sticky top-0 z-50" x-data="{ menuAbierto: false }">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-16">
 
@@ -120,14 +120,14 @@
             Identificador
           </label>
           <input type="text" id="nombreSensor" x-model.trim="nuevoSensor.nombre" placeholder="Ej: Sensor A" required class="w-full  border border-slate-400 px-3.5 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
-          <span x-show="errores.nombre" x-text="errores.nombre" class="text-xs text-red-600 mt-1 block" x-cloak></span>
+          <span x-show="errores.tipo" x-text="errores.tipo" class="text-xs text-red-600 mt-1 block" x-cloak></span>
         </div>
         <div>
           <label for="tipoSensor" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
             Tipo de Medición
           </label>
           <input type="text" id="tipoSensor" x-model.trim="nuevoSensor.tipo" placeholder="Ej: Temperatura" required class="w-full  border border-slate-400 px-3.5 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
-          <span x-show="errores.nombre" x-text="errores.nombre" class="text-xs text-red-600 mt-1 block" x-cloak></span>
+          <span x-show="errores.tipo" x-text="errores.tipo" class="text-xs text-red-600 mt-1 block" x-cloak></span>
         </div>
 
         <div>
@@ -322,3 +322,5 @@
   </script>
 
 </body>
+
+</html>
