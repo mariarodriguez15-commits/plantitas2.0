@@ -1,0 +1,12 @@
+[
+  { "id": 1, "cultivoId": 1, "nombre": "Sensor Temp-01", "tipo": "Temperatura", "estado": "Activo" },
+  { "id": 2, "cultivoId": 1, "nombre": "Sensor Hum-01", "tipo": "Humedad", "estado": "Activo" },
+  { "id": 3, "cultivoId": 2, "nombre": "Sensor pH-01", "tipo": "pH", "estado": "Alerta" },
+  { "id": 4, "cultivoId": 3, "nombre": "Sensor Temp-02", "tipo": "Temperatura", "estado": "Activo" },
+  { "id": 5, "cultivoId": 4, "nombre": "Sensor Hum-02", "tipo": "Humedad", "estado": "Desconectado" },
+  { "id": 6, "cultivoId": 5, "nombre": "Sensor Temp-03", "tipo": "Temperatura", "estado": "Activo" },
+  { "id": 7, "cultivoId": 6, "nombre": "Sensor pH-02", "tipo": "pH", "estado": "Mantenimiento" },
+  { "id": 8, "cultivoId": 7, "nombre": "Sensor Hum-03", "tipo": "Humedad", "estado": "Activo" },
+  { "id": 9, "cultivoId": 8, "nombre": "Sensor Temp-04", "tipo": "Temperatura", "estado": "Activo" },
+  { "id": 10, "cultivoId": 9, "nombre": "Sensor pH-03", "tipo": "pH", "estado": "Activo" }
+]

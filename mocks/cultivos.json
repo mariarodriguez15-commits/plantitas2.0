@@ -1,0 +1,12 @@
+[
+  { "id": 1, "nombre": "Maíz Lote 1", "tipo": "Maíz", "estado": "En crecimiento" },
+  { "id": 2, "nombre": "Ají Lote 1", "tipo": "Ají", "estado": "Listo para cosecha" },
+  { "id": 3, "nombre": "Tomate Lote 1", "tipo": "Tomate", "estado": "En crecimiento" },
+  { "id": 4, "nombre": "Lechuga Lote 1", "tipo": "Lechuga", "estado": "Listo para cosecha" },
+  { "id": 5, "nombre": "Maíz Lote 2", "tipo": "Maíz", "estado": "En crecimiento" },
+  { "id": 6, "nombre": "Ají Lote 2", "tipo": "Ají", "estado": "En crecimiento" },
+  { "id": 7, "nombre": "Papa Lote 1", "tipo": "Papa", "estado": "En crecimiento" },
+  { "id": 8, "nombre": "Zanahoria Lote 1", "tipo": "Zanahoria", "estado": "Listo para cosecha" },
+  { "id": 9, "nombre": "Cebolla Lote 1", "tipo": "Cebolla", "estado": "En crecimiento" },
+  { "id": 10, "nombre": "Trigo Lote 1", "tipo": "Trigo", "estado": "En crecimiento" }
+]
