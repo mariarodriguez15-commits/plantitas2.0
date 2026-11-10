@@ -82,6 +82,33 @@ export const api = {
     },
   },
 
+  cultivos: {
+    async listar() {
+      return await pedir('GET', '/cultivos');
+    },
+    async crear(datos) {
+      return await pedir('POST', '/cultivos', datos);
+    },
+    async actualizar(id, datos) {
+      return await pedir('PUT', `/cultivos/${id}`, datos);
+    },
+    async eliminar(id) {
+      return await pedir('DELETE', `/cultivos/${id}`);
+    }
+  },
+
+  sensores: {
+    async listar() {
+      return await pedir('GET', '/sensores');
+    },
+    async crear(datos) {
+      return await pedir('POST', '/sensores', datos);
+    },
+    async eliminar(id) {
+      return await pedir('DELETE', `/sensores/${id}`);
+    }
+  },
+
   preferencias: {
     leer(clave, porDefecto = null) {
       try {
