@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cultivos</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body class="bg-white text-slate-800 font-sans antialiased min-h-screen flex flex-col">
     <header class="bg-emerald-900 text-white shadow-md sticky top-0 z-50">
@@ -33,44 +34,97 @@
     </div>
   </header>
 
-  <section class="bg-white-100 p-6 border-4 rounded-lg mx-96 flex flex-col m-4 ">
+    <div x-data="{nombreCultivo:'', tipoCultivo:'', cultivo: [],
+    init(){
+        const guardados = localStorage.getItem('misCultivos');
+        if(guardados){
+            this.cultivo = JSON.parse(guardados);
+        }
+    },
+    
+    agregarCultivo(){
+        if(this.nombreCultivo.trim() !== '' && this.tipoCultivo.trim() !== ''){
+            this.cultivo.push({
+                nombre: this.nombreCultivo,
+                tipo: this.tipoCultivo
+            });
+
+            localStorage.setItem('misCultivos',JSON.stringify(this.cultivo));
+            this.nombreCultivo = '';
+            this.tipoCultivo = '';
+        }
+
+    }
+    }" x-init="init()">
+
+        <section class="bg-white p-6 border border-slate-700 mx-96 m-4 ">
         <h2 class="bg-emerald-900 text-slate-200 text-center m-2 text-2xl rounded-sm g-2">Agregar Nuevo Cultivo</h2>
-        <form class=" bg-white-200 ">
-            <label for="nombreCultivo">Nombre</label>
-            <input type="text" id="nombreCultivo" name="nombreCultivo" required>
 
-            <label for="tipoCultivo">Tipo</label>
-            <input type="text" id="tipoCultivo" name="tipoCultivo" required>
+            <form @submit.prevent="agregarCultivo()" class="space-y-4">
+                
+                <div>
+                    <label for="nombreCultivo" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
+                        Nombre
+                    </label>
+                    <input
+                    type="text"
+                    x-model="nombreCultivo" 
+                    name="nombreCultivo" required
+                    placeholder="Ej:Cultivo A"
+                    class="w-full border border-slate-400 px-3.5 py-2 text-sm text-slate-800 placeholder-slate-400">
+                </div>
+            
+                <div>
+                    <label for="tipoCultivo" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
+                        Tipo
+                    </label>
+                    <input 
+                    type="text" 
+                    x-model="tipoCultivo" 
+                    name="tipoCultivo" required
+                    placeholder="Ej:Maíz"
+                    class="w-full border border-slate-400 px-3.5 py-2 text-sm text-slate-800 placeholder-slate-400">
+                </div>
 
-            <button type="submit">Agregar</button>
-        </form>
-    </section>
+                <button type="submit" class="w-full mt-2 bg-emerald-800 hover:bg-emerald-700 active:scale-[0.99] text-white font-medium py-2.5 px-4 text-sm transition duration-150 shadow-sm cursor-pointer disabled:opacity-50">
+                    Agregar
+                </button>
+
+
+
+            </form>
+        </section>
+        
+        <section class="bg-slate-100 p-6 border border-slate-500 mx-auto max-w-2xl shadow-md flex flex-col m-4 ">
+        <h2 class="bg-emerald-900 text-slate-200 text-2xl text-center rounded-sm p-4 shadow-md font-semibold">
+            Listado de Cultivos
+        </h2>
+        <div class="overflow-x-auto">
+            <table class="bg-slate-200 text-base text-center w-full rounded-lg">
+                <thead class="bg-slate-200 text-slate-700 text-lg uppercase ">
+                    <tr>
+                        <th class="p-3">Cultivo</th>
+                        <th class="p-3">Tipo</th>
+                        <th class="p-3">Estado</th>
+                    </tr>
+                </thead>
+                <tbody class ="divide-y divide-slate-200">
+                    <template x-for="(c,index) in cultivo" :key ="index">
+                        <tr class="hover:bg-slate-50">
+                            <td class="p-3 font-medium text-slate-700" x-text="c.nombre">Cultivo 1</td>
+                            <td class="p-3 font-medium text-slate-700" x-text="c.tipo">Maíz</td>
+                            <td class="p-3">Estado</td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+
+            <p x-show="cultivo.length ==0" class="text-center text-sm text-slate-400 py-4"></p>
+        </div>
+        
+        </section>
+
+    </div>
     
-    <section class="bg-white-100 p-6 border-4 rounded-lg mx-96 flex flex-col m-4 gap gap-4 ">
-        <h2 class="bg-emerald-900 text-slate-200 text-4xl mx-auto top-0 text-center rounded-sm p-6 shadow-md">Listado de Cultivos</h2>
-        <table class="bg-slate-200 text-2xl text-center rounded-lg">
-            <thead class="text-2xl">
-                <tr>
-                    <th>Cultivo</th>
-                    <th>Tipo</th>
-                    <th>Estado</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Cultivo 1</td>
-                    <td>Maíz</td>
-                    <td>En crecimiento</td>
-                </tr>
-                <tr>
-                    <td>Cultivo 2</td>
-                    <td>Ají</td>
-                    <td>Listo para cosecha</td>
-                </tr>
-            </tbody>
-        </table>
-    </section>
-    
-    <script src="js/cultivos.js" defer></script>
 </body>
 </html>
