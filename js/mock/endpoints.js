@@ -1,6 +1,6 @@
 import { endpointsAuth, usuarioDelToken } from './auth.js';
-import { endpointsCultivos } from './mock/cultivos.js'; 
-import { endpointsSensores } from './mock/sensores.js'; 
+import { endpointsCultivos } from './cultivos.js'; 
+import { endpointsSensores } from './sensores.js';
 
 export const endpoints = [
   ...endpointsAuth, 
