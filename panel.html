@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Panel principal - CultivaWeb</title>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 
 <body class="min-h-screen bg-slate-50 text-slate-800 flex flex-col font-rounded antialiased">
@@ -233,5 +234,13 @@
       btnMenu.setAttribute('aria-expanded', !isExpanded);
     });
   </script>
+
+  <script type="module">
+    import { protegerRuta, configurarCerrarSesion } from './js/guardia.js';
+    
+    protegerRuta(); // 
+    configurarCerrarSesion(); 
+  </script>
+
 </body>
 </html>
