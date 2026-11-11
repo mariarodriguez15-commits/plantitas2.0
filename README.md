@@ -47,3 +47,11 @@ Aquí está la equivalencia de lo que tenemos programado con lo que será la API
 | api.sensores.listar() | GET | /sensores | Trae la lista de los sensores. |
 | api.sensores.crear() | POST | /sensores | Registra un sensor nuevo. |
 | api.sensores.eliminar() | DELETE | /sensores/:id | Borra un sensor. |
+
+
+## Uso de Inteligencia Artificial
+En el desarrollo de este proyecto se utilizó IA (Claude 3.5 Sonnet) exclusivamente como una herramienta de consulta. Le hicimos preguntas conceptuales sobre cómo funcionaban las cosas de los PDFs entregados y del proyecto del profesor.
+
+Para guiarnos, nos basamos principalmente en los PDFs entregados en clases y en el proyecto de ejemplo del profesor. La IA nos sirvió para aclarar dudas sobre esos materiales y entender cómo adaptar la lógica a nuestro propio proyecto. Por lo tanto, no se incorporó código generado automáticamente, sino que el equipo programó y adaptó las soluciones basándose en dichos apuntes. 
+
+Se puede revisar un ejemplo de cómo utilizamos la IA (las conversaciones y las explicaciones que nos dio) en la carpeta ia/.
