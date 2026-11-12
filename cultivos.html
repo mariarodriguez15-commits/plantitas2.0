@@ -6,64 +6,31 @@
     <title>Cultivos</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <style>
-    [x-cloak] { display: none !important; }
-  </style>
+    <style>[x-cloak] { display: none !important; }</style>
 </head>
 <body class="bg-white text-slate-800 font-sans antialiased min-h-screen flex flex-col">
+    
     <header class="bg-emerald-900 text-white shadow-md sticky top-0 z-50" x-data="{ menuAbierto: false }">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-16">
-
         <h1 class="text-2xl font-bold tracking-wide text-white leading-none">CultivaWeb</h1>
-
         <nav class="hidden md:flex items-center gap-2">
-          <a href="panel.html" class="px-3.5 py-2 text-sm font-medium text-emerald-100 hover:bg-emerald-800/60 hover:text-white transition">
-            Panel principal
-          </a>
-
-          <a href="cultivos.html" aria-current="page" class="px-3.5 py-2 text-sm font-semibold bg-emerald-800 text-white shadow-inner">
-            Cultivos
-          </a>
-
-          <a href="sensores.html" class="px-3.5 py-2 text-sm font-medium text-emerald-100 hover:bg-emerald-800/60 hover:text-white transition">
-            Sensores
-          </a>
-
-          <a href="index.html" class="px-3.5 py-2 text-sm font-medium text-red-200 hover:bg-red-900/40 hover:text-white transition">
-            Cerrar Sesión
-          </a>
+          <a href="panel.html" class="px-3.5 py-2 text-sm font-medium text-emerald-100 hover:bg-emerald-800/60 hover:text-white transition">Panel principal</a>
+          <a href="cultivos.html" aria-current="page" class="px-3.5 py-2 text-sm font-semibold bg-emerald-800 text-white shadow-inner">Cultivos</a>
+          <a href="sensores.html" class="px-3.5 py-2 text-sm font-medium text-emerald-100 hover:bg-emerald-800/60 hover:text-white transition">Sensores</a>
+          <a href="index.html" class="px-3.5 py-2 text-sm font-medium text-red-200 hover:bg-red-900/40 hover:text-white transition">Cerrar Sesión</a>
         </nav>
         <div class="flex md:hidden">
-          <button @click="menuAbierto = !menuAbierto" type="button" aria-label="Abrir menú"
-                  class="p-2 rounded-xl text-emerald-200 hover:text-white hover:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-600 ml-auto">
-            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
+          <button @click="menuAbierto = !menuAbierto" type="button" class="p-2 rounded-xl text-emerald-200 hover:text-white hover:bg-emerald-800 ml-auto">
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
           </button>
         </div>
     </div>
-      <nav x-show="menuAbierto"
-           x-transition:enter="transition ease-out duration-200"
-           x-transition:enter-start="opacity-0 -translate-y-2"
-           x-transition:enter-end="opacity-100 translate-y-0"
-           x-transition:leave="transition ease-in duration-150"
-           x-transition:leave-start="opacity-100 translate-y-0"
-           x-transition:leave-end="opacity-0 -translate-y-2"
-           x-cloak
-           class="md:hidden py-3 border-t border-emerald-800 flex flex-col items-end space-y-1">
-        <a href="panel.html" class="w-full text-right px-4 py-2 text-sm font-semibold text-emerald-100 hover:bg-emerald-800">
-          Inicio
-        </a>
-        <a href="cultivos.html" aria-current="page" class="w-full text-right px-4 py-2 text-sm font-bold bg-emerald-800 text-white">
-          Cultivos
-        </a>
-        <a href="sensores.html" class="w-full text-right px-4 py-2 text-sm font-semibold text-emerald-100 hover:bg-emerald-800">
-          Sensores
-        </a>
-        <a href="index.html" class="w-full text-right px-4 py-2 text-sm font-semibold text-red-300 hover:bg-red-900/50">
-          Cerrar Sesión
-        </a>
+      <nav x-show="menuAbierto" x-cloak class="md:hidden py-3 border-t border-emerald-800 flex flex-col items-end space-y-1">
+        <a href="panel.html" class="w-full text-right px-4 py-2 text-sm font-semibold text-emerald-100 hover:bg-emerald-800">Inicio</a>
+        <a href="cultivos.html" class="w-full text-right px-4 py-2 text-sm font-bold bg-emerald-800 text-white">Cultivos</a>
+        <a href="sensores.html" class="w-full text-right px-4 py-2 text-sm font-semibold text-emerald-100 hover:bg-emerald-800">Sensores</a>
+        <a href="index.html" class="w-full text-right px-4 py-2 text-sm font-semibold text-red-300 hover:bg-red-900/50">Cerrar Sesión</a>
       </nav>
   </header>
 
@@ -89,15 +56,11 @@
       this.toast.mensaje = mensaje;
       this.toast.tipo = tipo;
       this.toast.visible = true;
-      this.toast.timer = setTimeout(() => {
-        this.toast.visible = false;
-      }, 3200);
+      this.toast.timer = setTimeout(() => { this.toast.visible = false; }, 3200);
     },
 
     async init() { 
-      setTimeout(async () => {
-        await this.cargarCultivos(); 
-      }, 100);
+      setTimeout(async () => { await this.cargarCultivos(); }, 100);
     },
     
     get tiposDisponibles() {
@@ -180,7 +143,7 @@
       this.errores = { nombre: '', tipo: '' };
       this.editandoId = c.id; 
       this.formCultivo = { nombre: c.nombre, tipo: c.tipo, estado: c.estado };
-      this.mostrarToast(`Editando cultivo: ${c.nombre}`, 'info'); 
+      this.mostrarToast('Editando cultivo: ' + c.nombre, 'info'); 
     },
     
     cancelarEdicion() { 
@@ -215,102 +178,64 @@
           <h2 class="text-xl font-bold text-slate-900">Gestión de Cultivos</h2>
           <p class="text-sm text-slate-500 mt-0.5">Busca por nombre o filtra por estado y tipo de cultivo.</p>
         </div>
-
         <div class="flex flex-col sm:flex-row sm:items-center gap-3">
           <div class="relative">
             <label for="busquedaCultivo" class="sr-only">Buscar por nombre</label>
             <input type="text" id="busquedaCultivo" x-model.trim="busqueda" @input="paginaActual = 1" placeholder="Buscar cultivo..." class="w-full sm:w-56 border border-slate-400 bg-white px-3.5 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
           </div>
-
           <div>
             <label for="filtroEstado" class="sr-only">Filtrar por estado</label>
-            <select id="filtroEstado" x-model="filtroEstado" @change="paginaActual = 1"
-                    class="w-full sm:w-auto border border-slate-400 bg-white px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
+            <select id="filtroEstado" x-model="filtroEstado" @change="paginaActual = 1" class="w-full sm:w-auto border border-slate-400 bg-white px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
               <option value="Todos">Todos los estados</option>
               <option value="En crecimiento">En crecimiento</option>
               <option value="Listo para cosecha">Listo para cosecha</option>
               <option value="Cosechado">Cosechado</option>
-              
             </select>
           </div>
-
           <div>
             <label for="filtroTipo" class="sr-only">Filtrar por tipo</label>
-            <select id="filtroTipo" x-model="filtroTipo" @change="paginaActual = 1"
-                    class="w-full sm:w-auto border border-slate-400 bg-white px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
+            <select id="filtroTipo" x-model="filtroTipo" @change="paginaActual = 1" class="w-full sm:w-auto border border-slate-400 bg-white px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
               <option value="Todos">Todos los tipos</option>
               <template x-for="tipo in tiposDisponibles" :key="tipo">
                 <option :value="tipo" x-text="tipo"></option>
               </template>
             </select>
           </div>
-
-          <button type="button" 
-                  x-show="busqueda !== '' || filtroEstado !== 'Todos' || filtroTipo !== 'Todos'"
-                  @click="limpiarFiltros()"
-                  x-cloak
-                  class="px-3.5 py-2 text-xs font-semibold text-slate-600 hover:text-slate-900 border border-slate-300 hover:bg-slate-100 transition cursor-pointer">
-            Limpiar
-          </button>
+          <button type="button" x-show="busqueda !== '' || filtroEstado !== 'Todos' || filtroTipo !== 'Todos'" @click="limpiarFiltros()" class="px-3.5 py-2 text-xs font-semibold text-slate-600 hover:text-slate-900 border border-slate-300 hover:bg-slate-100 transition cursor-pointer">Limpiar</button>
         </div>
       </div>
     </section>
   
     <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
       <section class="bg-white p-6 border border-slate-500 lg:col-span-1 self-start">
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="text-xl font-bold text-slate-900" x-text="editandoId ? 'Editar Cultivo' : 'Agregar Nuevo Cultivo'"></h3>
-          <span x-show="editandoId" x-cloak class="px-2 py-0.5 text-xs font-semibold bg-amber-100 text-amber-800 rounded">
-            Editando
-          </span>
-        </div>
-
-        <form @submit.prevent="guardarCultivo()" class="space-y-4">
+        <h3 class="text-xl font-bold text-slate-900 mb-4" x-text="editandoId ? 'Editar Cultivo' : 'Agregar Nuevo Cultivo'"></h3>
+        <form @submit.prevent="guardarCultivo()" class="space-y-4" novalidate>
           <div>
-            <label for="nombreCultivo" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
-              Nombre
-            </label>
-            <input type="text" id="nombreCultivo" x-model.trim="formCultivo.nombre" placeholder="Ej: Cultivo A" required
-                   class="w-full border border-slate-400 px-3.5 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
+            <label class="block text-xs font-semibold uppercase text-slate-600 mb-1.5">Nombre</label>
+            <input type="text" x-model="formCultivo.nombre" class="w-full border border-slate-400 px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
             <span x-show="errores.nombre" x-text="errores.nombre" class="text-xs text-red-600 mt-1 block" x-cloak></span>
           </div>
-
           <div>
-            <label for="tipoCultivo" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
-              Tipo
-            </label>
-            <input type="text" id="tipoCultivo" x-model.trim="formCultivo.tipo" placeholder="Ej: Maíz" required
-                   class="w-full border border-slate-400 px-3.5 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
+            <label class="block text-xs font-semibold uppercase text-slate-600 mb-1.5">Tipo</label>
+            <input type="text" x-model="formCultivo.tipo" class="w-full border border-slate-400 px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
             <span x-show="errores.tipo" x-text="errores.tipo" class="text-xs text-red-600 mt-1 block" x-cloak></span>
           </div>
-
           <div>
-            <label for="estadoCultivo" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
-              Estado
-            </label>
-            <select id="estadoCultivo" x-model="formCultivo.estado"
-                    class="w-full border border-slate-400 bg-white px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
+            <label class="block text-xs font-semibold uppercase text-slate-600 mb-1.5">Estado</label>
+            <select x-model="formCultivo.estado" class="w-full border border-slate-400 px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
               <option value="En crecimiento">En crecimiento</option>
               <option value="Listo para cosecha">Listo para cosecha</option>
               <option value="Cosechado">Cosechado</option>
             </select>
           </div>
-
           <div class="flex gap-2 pt-2">
-            <button type="submit" :disabled="enviando"
-                    class="flex-1 bg-emerald-800 hover:bg-emerald-700 active:scale-[0.99] text-white font-medium py-2.5 px-4 text-sm transition duration-150 shadow-sm cursor-pointer disabled:opacity-50">
-              <span x-text="enviando ? 'Guardando...' : (editandoId ? 'Guardar Cambios' : '+ Agregar Cultivo')"></span>
-            </button>
-
-            <button type="button" x-show="editandoId" @click="cancelarEdicion()" x-cloak
-                    class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-medium py-2.5 px-4 text-sm transition duration-150 cursor-pointer">
-              Cancelar
-            </button>
+            <button type="submit" :disabled="enviando" class="flex-1 bg-emerald-800 hover:bg-emerald-700 text-white py-2.5 text-sm transition disabled:opacity-50" x-text="enviando ? 'Guardando...' : (editandoId ? 'Guardar Cambios' : '+ Agregar Cultivo')"></button>
+            <button type="button" x-show="editandoId" @click="cancelarEdicion()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 py-2.5 px-4 text-sm transition">Cancelar</button>
           </div>
         </form>
       </section>
 
-       <section class="bg-white border border-slate-500 shadow-sm overflow-hidden lg:col-span-1" x-data="{ acordeonAbierto: null }">
+      <section class="bg-white border border-slate-500 shadow-sm overflow-hidden lg:col-span-1" x-data="{ acordeonAbierto: null }">
           <div class="px-5 py-3.5 bg-slate-50 border-b border-slate-200 flex items-center gap-2">
             <h4 class="text-sm font-bold text-slate-800">Guía de Estados</h4>
           </div>
@@ -384,17 +309,14 @@
         </div>
       </section>
     </div>
+
     <div x-show="modalAbierto" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4">
       <div @click.away="modalAbierto = false" class="bg-white border border-slate-400 max-w-sm w-full p-6 shadow-xl space-y-4">
         <h4 class="text-lg font-bold text-slate-900">¿Eliminar cultivo?</h4>
         <p class="text-sm text-slate-600">Esta acción no se puede deshacer. El cultivo se eliminará permanentemente.</p>
         <div class="flex justify-end gap-2 pt-2">
-          <button type="button" @click="modalAbierto = false" class="px-4 py-2 text-sm font-medium text-slate-700 bg-slate-200 hover:bg-slate-300 transition cursor-pointer">
-            Cancelar
-          </button>
-          <button type="button" @click="confirmarEliminar()" class="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 transition cursor-pointer">
-            Eliminar
-          </button>
+          <button type="button" @click="modalAbierto = false" class="px-4 py-2 text-sm font-medium text-slate-700 bg-slate-200 hover:bg-slate-300 transition cursor-pointer">Cancelar</button>
+          <button type="button" @click="confirmarEliminar()" class="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 transition cursor-pointer">Eliminar</button>
         </div>
       </div>
     </div>
@@ -413,25 +335,18 @@
            'bg-red-700 text-white': toast.tipo === 'error'
          }"
          class="fixed bottom-5 right-5 px-4 py-3 rounded-xl shadow-lg text-sm font-medium z-50 flex items-center gap-2.5">
-      <svg x-show="toast.tipo === 'success'" class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-      </svg>
-      <svg x-show="toast.tipo === 'info'" class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-      </svg>
-      <svg x-show="toast.tipo === 'error'" class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
       <span x-text="toast.mensaje"></span>
     </div>
 
   </main>
 
   <script type="module">
-  import { api } from './js/api.js';
-  import { protegerRuta, configurarCerrarSesion } from './js/guardia.js';
-  protegerRuta(); configurarCerrarSesion(); window.api = api;
-</script>
+    import { api } from './js/api.js';
+    import { protegerRuta, configurarCerrarSesion } from './js/guardia.js';
     
+    protegerRuta(); 
+    configurarCerrarSesion(); 
+    window.api = api;
+  </script>
 </body>
 </html>
