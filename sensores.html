@@ -193,12 +193,9 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6" x-show="!cargando && !error" x-cloak>
       <div class="lg:col-span-1 space-y-6">
-        <section class="bg-white p-5 border border-slate-500 rounded-xl">
+       <section class="bg-white p-5 border border-slate-500 rounded-xl">
           <div class="mb-4">
             <h3 class="text-xl font-bold text-slate-900" x-text="editandoId ? 'Editar Sensor' : 'Agregar Sensor'"></h3>
-            <span x-show="editandoId" x-cloak class="px-2.5 py-0.5 text-xs font-semibold bg-amber-100 text-amber-800 rounded-full">
-              Editando
-            </span>
           </div>
 
           <form @submit.prevent="guardarSensor" class="space-y-4" novalidate>
