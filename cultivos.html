@@ -87,10 +87,9 @@
             <select id="filtroEstado" x-model="filtroEstado"
                     class="w-full sm:w-auto border border-slate-400 bg-white px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
               <option value="Todos">Todos los estados</option>
-              <option value="Activo">Activo</option>
               <option value="En crecimiento">En crecimiento</option>
               <option value="Cosechado">Cosechado</option>
-              <option value="En alerta">En alerta</option>
+              
             </select>
           </div>
 
@@ -150,10 +149,8 @@
             </label>
             <select id="estadoCultivo" x-model="formCultivo.estado"
                     class="w-full border border-slate-400 bg-white px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
-              <option value="Activo">Activo</option>
               <option value="En crecimiento">En crecimiento</option>
               <option value="Cosechado">Cosechado</option>
-              <option value="En alerta">En alerta</option>
             </select>
           </div>
 
@@ -286,7 +283,7 @@
 
           this.cultivos = [
             { id: 101, nombre: 'Cultivo de Maíz', tipo: 'Maíz', estado: 'Activo' },
-            { id: 102, nombre: 'Cultivo de Ají', tipo: 'Ají', estado: 'En alerta' },
+            { id: 102, nombre: 'Cultivo de Ají', tipo: 'Ají', estado: 'En crecimiento' },
           ];
           this.guardarEnStorage();
         },
