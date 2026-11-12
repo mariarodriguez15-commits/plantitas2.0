@@ -192,50 +192,51 @@
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6" x-show="!cargando && !error" x-cloak>
-      <section class="bg-white p-5 border border-slate-500 rounded-xl lg:col-span-1 self-start transition-colors"
-               :class="editandoId ? 'ring-2 ring-amber-400/70' : ''">
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="text-xl font-bold text-slate-900" x-text="editandoId ? 'Editar Sensor' : 'Agregar Sensor'"></h3>
-          <span x-show="editandoId" x-cloak class="px-2.5 py-0.5 text-xs font-semibold bg-amber-100 text-amber-800 rounded-full">
-            Editando
-          </span>
-        </div>
+      <div class="lg:col-span-1 space-y-6">
+        <section class="bg-white p-5 border border-slate-500 rounded-xl transition-colors"
+                 :class="editandoId ? 'ring-2 ring-amber-400/70' : ''">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-xl font-bold text-slate-900" x-text="editandoId ? 'Editar Sensor' : 'Agregar Sensor'"></h3>
+            <span x-show="editandoId" x-cloak class="px-2.5 py-0.5 text-xs font-semibold bg-amber-100 text-amber-800 rounded-full">
+              Editando
+            </span>
+          </div>
 
-        <form @submit.prevent="guardarSensor" class="space-y-4" novalidate>
-          <div>
-            <label for="identificadorSensor" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">Identificador</label>
-            <input id="identificadorSensor" type="text" x-model.trim="formSensor.nombre" placeholder="Ej: Sensor Temp-01" class="w-full border border-slate-400 rounded-lg px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
-            <span x-show="errores.nombre" x-text="errores.nombre" x-cloak class="text-xs text-red-600 mt-1 block font-medium"></span>
-          </div>
-          <div>
-            <label for="tipoMedicionSensor" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">Tipo de Medición</label>
-            <input id="tipoMedicionSensor" type="text" x-model.trim="formSensor.tipo" placeholder="Ej: Temperatura" class="w-full border border-slate-400 rounded-lg px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
-            <span x-show="errores.tipo" x-text="errores.tipo" x-cloak class="text-xs text-red-600 mt-1 block font-medium"></span>
-          </div>
-          <div>
-            <label for="estadoSensor" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">Estado</label>
-            <select id="estadoSensor" x-model="formSensor.estado" class="w-full border border-slate-400 rounded-lg bg-white px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
-              <option value="Activo">Activo</option>
-              <option value="Desconectado">Desconectado</option>
-              <option value="Alerta">Alerta</option>
-              <option value="Mantenimiento">Mantenimiento</option>
-            </select>
-          </div>
-          <div class="flex gap-2 pt-2">
-            <button type="submit" :disabled="enviando"
-                    class="flex-1 bg-emerald-800 hover:bg-emerald-700 active:scale-[0.99] text-white font-medium py-2.5 px-4 rounded-lg text-sm transition disabled:opacity-50 cursor-pointer shadow-sm">
-              <span x-text="enviando ? 'Guardando...' : (editandoId ? 'Guardar Cambios' : '+ Registrar Sensor')"></span>
-            </button>
+          <form @submit.prevent="guardarSensor" class="space-y-4" novalidate>
+            <div>
+              <label for="identificadorSensor" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">Identificador</label>
+              <input id="identificadorSensor" type="text" x-model.trim="formSensor.nombre" placeholder="Ej: Sensor Temp-01" class="w-full border border-slate-400 rounded-lg px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+              <span x-show="errores.nombre" x-text="errores.nombre" x-cloak class="text-xs text-red-600 mt-1 block font-medium"></span>
+            </div>
+            <div>
+              <label for="tipoMedicionSensor" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">Tipo de Medición</label>
+              <input id="tipoMedicionSensor" type="text" x-model.trim="formSensor.tipo" placeholder="Ej: Temperatura" class="w-full border border-slate-400 rounded-lg px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+              <span x-show="errores.tipo" x-text="errores.tipo" x-cloak class="text-xs text-red-600 mt-1 block font-medium"></span>
+            </div>
+            <div>
+              <label for="estadoSensor" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">Estado</label>
+              <select id="estadoSensor" x-model="formSensor.estado" class="w-full border border-slate-400 rounded-lg bg-white px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                <option value="Activo">Activo</option>
+                <option value="Desconectado">Desconectado</option>
+                <option value="Alerta">Alerta</option>
+                <option value="Mantenimiento">Mantenimiento</option>
+              </select>
+            </div>
+            <div class="flex gap-2 pt-2">
+              <button type="submit" :disabled="enviando"
+                      class="flex-1 bg-emerald-800 hover:bg-emerald-700 active:scale-[0.99] text-white font-medium py-2.5 px-4 rounded-lg text-sm transition disabled:opacity-50 cursor-pointer shadow-sm">
+                <span x-text="enviando ? 'Guardando...' : (editandoId ? 'Guardar Cambios' : '+ Registrar Sensor')"></span>
+              </button>
 
-            <button type="button" x-show="editandoId" @click="cancelarEdicion()" x-cloak
-                    class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-medium py-2.5 px-4 rounded-lg text-sm transition cursor-pointer">
-              Cancelar
-            </button>
-          </div>
-        </form>
-      </section>
+              <button type="button" x-show="editandoId" @click="cancelarEdicion()" x-cloak
+                      class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-medium py-2.5 px-4 rounded-lg text-sm transition cursor-pointer">
+                Cancelar
+              </button>
+            </div>
+          </form>
+        </section>
 
-      <section class="bg-white  border border-slate-500 shadow-sm overflow-hidden" x-data="{ acordeonAbierto: null }">
+        <section class="bg-white border border-slate-500 rounded-xl shadow-sm overflow-hidden" x-data="{ acordeonAbierto: null }">
           <div class="px-5 py-3.5 bg-slate-50 border-b border-slate-200 flex items-center gap-2">
             <svg class="w-4 h-4 text-emerald-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -247,7 +248,7 @@
               <button type="button"
                       @click="acordeonAbierto = acordeonAbierto === 1 ? null : 1"
                       class="w-full px-5 py-3 text-left text-sm font-medium text-slate-700 hover:bg-slate-50 flex items-center justify-between transition cursor-pointer">
-                <span>Significado de los estados</span>
+                <span>1. Significado de los estados</span>
                 <svg class="w-4 h-4 text-slate-400 transition-transform duration-200"
                      :class="acordeonAbierto === 1 ? 'rotate-180 text-emerald-700' : ''"
                      fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -262,23 +263,25 @@
               </div>
             </div>
             <div>
+              <!-- Corregido número e índice de acordeón de 3 a 2 -->
               <button type="button"
-                      @click="acordeonAbierto = acordeonAbierto === 3 ? null : 3"
+                      @click="acordeonAbierto = acordeonAbierto === 2 ? null : 2"
                       class="w-full px-5 py-3 text-left text-sm font-semibold text-slate-800 hover:bg-slate-50 flex items-center justify-between transition cursor-pointer">
-                <span>3. Recomendación al registrar</span>
+                <span>2. Recomendación al registrar</span>
                 <svg class="w-4 h-4 text-slate-500 transition-transform duration-200 shrink-0"
-                     :class="acordeonAbierto === 3 ? 'rotate-180 text-emerald-800' : ''"
+                     :class="acordeonAbierto === 2 ? 'rotate-180 text-emerald-800' : ''"
                      fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
-              <div x-show="acordeonAbierto === 3" x-cloak class="px-5 pb-4 pt-1 text-xs text-slate-600 space-y-1.5 leading-relaxed bg-slate-50/40">
+              <div x-show="acordeonAbierto === 2" x-cloak class="px-5 pb-4 pt-1 text-xs text-slate-600 space-y-1.5 leading-relaxed bg-slate-50/40">
                 <p>Usa nombres identificables por sector (ej. <em>Sensor pH-01</em>).</p>
               </div>
             </div>
           </div>
         </section>
-
+      </div>
+      
       <section class="bg-white border border-slate-500 overflow-hidden lg:col-span-2">
         <div class="p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-slate-100">
           <div>
