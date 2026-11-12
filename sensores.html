@@ -193,7 +193,7 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6" x-show="!cargando && !error" x-cloak>
       <div class="lg:col-span-1 space-y-6">
-        <section class="bg-white p-5 border border-slate-500 rounded-xl">
+        <section class="bg-white p-5 border border-slate-500">
           <div class="mb-4">
             <h3 class="text-xl font-bold text-slate-900" x-text="editandoId ? 'Editar Sensor' : 'Agregar Sensor'"></h3>
           </div>
@@ -259,7 +259,6 @@
               </div>
             </div>
             <div>
-              <!-- Corregido número e índice de acordeón de 3 a 2 -->
               <button type="button"
                       @click="acordeonAbierto = acordeonAbierto === 2 ? null : 2"
                       class="w-full px-5 py-3 text-left text-sm font-semibold text-slate-800 hover:bg-slate-50 flex items-center justify-between transition cursor-pointer">
