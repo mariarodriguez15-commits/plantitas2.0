@@ -118,23 +118,6 @@
       this.ordenarPor = 'recientes';
       this.paginaActual = 1;
     },
-          this.mostrarToast(
-            esEdicion ? 'Cultivo actualizado correctamente.' : 'Cultivo agregado correctamente.',
-            'success'
-          );
-        } else {
-          this.mostrarToast(res.error || 'Error al guardar el cultivo.', 'error');
-        }
-      } catch (e) {
-        this.mostrarToast('Error de conexión al guardar.', 'error');
-      }
-      this.error = null;
-      try {
-        const res = await window.api.cultivos.listar();
-        if (res.ok) this.cultivos = res.data; else this.error = res.error;
-      } catch (e) { this.error = 'Error de conexión.'; }
-      this.cargando = false;
-    },
     
     async cargarCultivos() {
       this.cargando = true;
