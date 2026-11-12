@@ -42,9 +42,10 @@
     cargando: true, 
     error: null, 
     enviando: false,
+    editandoId: null,
     modalAbierto: false,
     sensorAEliminar: null,
-    nuevoSensor: { nombre: '', tipo: '', estado: 'Activo' }, 
+    formSensor: { nombre: '', tipo: '', estado: 'Activo' }, 
     errores: { nombre: '', tipo: '' },
     toast: { visible: false, mensaje: '', tipo: 'success', timer: null },
 
@@ -154,6 +155,7 @@
         const res = await window.api.sensores.eliminar(idEliminar);
         if (res.ok) {
           this.sensores = this.sensores.filter(s => s.id !== idEliminar);
+          if (this.editandoId === idEliminar) this.cancelarEdicion();
           this.modalAbierto = false;
           this.sensorAEliminar = null;
           this.mostrarToast('Sensor eliminado correctamente.', 'error');
@@ -172,7 +174,7 @@
         </div>
         <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
           <label for="cultivoSeleccionado" class="text-sm font-semibold text-slate-700">Cultivo seleccionado:</label>
-          <select id="cultivoSeleccionado" x-model.number="cultivoFiltroId" class="border border-slate-400 bg-white px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+          <select id="cultivoSeleccionado" x-model.number="cultivoFiltroId" @change="cancelarEdicion()" class="border border-slate-400 bg-white px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
             <template x-for="c in cultivosDisponibles" :key="c.id">
               <option :value="c.id" x-text="c.nombre"></option>
             </template>
