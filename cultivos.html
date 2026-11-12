@@ -67,7 +67,117 @@
       </nav>
   </header>
 
-  <main x-data="cultivosApp" x-init="initApp()" class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6" x-data="{
+    cultivos: [], 
+    busqueda: '', 
+    filtroEstado: 'Todos', 
+    filtroTipo: 'Todos',
+    cargando: true, 
+    error: null, 
+    enviando: false,
+    editandoId: null, 
+    modalAbierto: false, 
+    cultivoAEliminar: null,
+    formCultivo: { nombre: '', tipo: '', estado: 'En crecimiento' },
+    paginaActual: 1,
+    itemsPorPagina: 5,
+
+    async init() { 
+      setTimeout(async () => {
+        await this.cargarCultivos(); 
+      }, 100);
+    },
+    
+    get tiposDisponibles() {
+      const tipos = this.cultivos.map(c => c.tipo.trim()).filter(Boolean);
+      return [...new Set(tipos)];
+    },
+
+    get cultivosFiltrados() {
+      return this.cultivos.filter(c => {
+        const coincideNombre = c.nombre.toLowerCase().includes(this.busqueda.toLowerCase());
+        const coincideEstado = this.filtroEstado === 'Todos' || c.estado === this.filtroEstado;
+        const coincideTipo = this.filtroTipo === 'Todos' || c.tipo.toLowerCase() === this.filtroTipo.toLowerCase();
+        return coincideNombre && coincideEstado && coincideTipo;
+      });
+    },
+
+    get totalPaginas() {
+      return Math.max(1, Math.ceil(this.cultivosFiltrados.length / this.itemsPorPagina));
+    },
+
+    get indiceInicio() {
+      return (this.paginaActual - 1) * this.itemsPorPagina;
+    },
+
+    get indiceFin() {
+      return this.indiceInicio + this.itemsPorPagina;
+    },
+
+    get cultivosPaginados() {
+      if (this.paginaActual > this.totalPaginas) {
+        this.paginaActual = this.totalPaginas;
+      }
+      return this.cultivosFiltrados.slice(this.indiceInicio, this.indiceFin);
+    },
+    
+    limpiarFiltros() { 
+      this.busqueda = ''; 
+      this.filtroEstado = 'Todos'; 
+      this.filtroTipo = 'Todos';
+      this.paginaActual = 1;
+    },
+    
+    async cargarCultivos() {
+      this.cargando = true; 
+      this.error = null;
+      try {
+        const res = await window.api.cultivos.listar();
+        if (res.ok) this.cultivos = res.data; else this.error = res.error;
+      } catch (e) { this.error = 'Error de conexión.'; }
+      this.cargando = false;
+    },
+    
+    async guardarCultivo() {
+      this.enviando = true;
+      try {
+        let res = this.editandoId 
+          ? await window.api.cultivos.actualizar(this.editandoId, this.formCultivo) 
+          : await window.api.cultivos.crear(this.formCultivo);
+        if (res.ok) { 
+          this.cancelarEdicion(); 
+          await this.cargarCultivos(); 
+        } else { alert(res.error || 'Error al guardar'); }
+      } catch (e) { alert('Error al guardar.'); }
+      this.enviando = false;
+    },
+    
+    prepararEdicion(c) { 
+      this.editandoId = c.id; 
+      this.formCultivo = { nombre: c.nombre, tipo: c.tipo, estado: c.estado }; 
+    },
+    
+    cancelarEdicion() { 
+      this.editandoId = null; 
+      this.formCultivo = { nombre: '', tipo: '', estado: 'En crecimiento' }; 
+    },
+    
+    abrirModal(id) { 
+      this.cultivoAEliminar = id; 
+      this.modalAbierto = true; 
+    },
+    
+    async confirmarEliminar() {
+      try {
+        const res = await window.api.cultivos.eliminar(this.cultivoAEliminar);
+        if (res.ok) { 
+          this.modalAbierto = false; 
+          await this.cargarCultivos(); 
+        }
+      } catch (e) { alert('Error al eliminar.'); }
+    }
+  }" x-init="init()">
+
     <section class="bg-white p-6 border border-slate-500 shadow-xs">
       <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
@@ -116,7 +226,7 @@
       </div>
     </section>
   
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
       <section class="bg-white p-6 border border-slate-500 lg:col-span-1 self-start">
         <div class="flex items-center justify-between mb-4">
           <h3 class="text-xl font-bold text-slate-900" x-text="editandoId ? 'Editar Cultivo' : 'Agregar Nuevo Cultivo'"></h3>
@@ -170,62 +280,77 @@
         </form>
       </section>
 
-      <section class="bg-white border border-slate-500 overflow-hidden lg:col-span-2">
-        <div class="p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-slate-100">
-          <div>
-            <h3 class="text-2xl font-bold text-slate-900">Listado de Cultivos</h3>
-            <p class="text-xs text-slate-500 mt-0.5">Cultivos registrados en el sistema</p>
+       <section class="bg-white border border-slate-500 shadow-sm overflow-hidden lg:col-span-1" x-data="{ acordeonAbierto: null }">
+          <div class="px-5 py-3.5 bg-slate-50 border-b border-slate-200 flex items-center gap-2">
+            <h4 class="text-sm font-bold text-slate-800">Guía de Estados</h4>
           </div>
-          <span class="inline-flex items-center self-start sm:self-auto px-3 py-1 text-xs font-bold text-emerald-800 bg-emerald-50 rounded-full border border-emerald-200"
-                x-text="cultivosFiltrados.length + ' cultivo(s)'">
-          </span>
+          <div class="divide-y divide-slate-200">
+            <div>
+              <button type="button" @click="acordeonAbierto = acordeonAbierto === 1 ? null : 1" class="w-full px-5 py-3 text-left text-sm font-medium text-slate-700 hover:bg-slate-50 flex items-center justify-between transition cursor-pointer">
+                <span>Significado de los estados</span>
+                <svg class="w-4 h-4 text-slate-400 transition-transform duration-200" :class="acordeonAbierto === 1 ? 'rotate-180 text-emerald-700' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+              </button>
+              <div x-show="acordeonAbierto === 1" x-cloak class="px-5 pb-3.5 text-xs text-slate-600 space-y-1.5 leading-relaxed">
+                <p><strong class="text-emerald-700">Listo para la cosecha:</strong> Cultivo listo para ser cosechado.</p>
+                <p><strong class="text-blue-700">En crecimiento:</strong> Etapa inicial o vegetativa previa a floración.</p>
+                <p><strong class="text-slate-700">Cosechado:</strong> Ciclo finalizado y registrado en historial.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      <section class="bg-white border border-slate-500 overflow-hidden lg:col-span-2">
+        <div class="p-6 border-b border-slate-100 flex justify-between items-center">
+          <h3 class="text-2xl font-bold text-slate-900">Listado de Cultivos</h3>
+          <span class="px-3 py-1 text-xs font-bold text-emerald-800 bg-emerald-50 rounded-full" x-text="cultivosFiltrados.length + ' cultivo(s)'"></span>
+        </div>
+        
+        <div x-show="cargando" class="p-6 text-center text-emerald-700 font-semibold animate-pulse">Cargando cultivos...</div>
+        <div x-show="error && !cargando" class="p-6 bg-red-50 text-red-700 text-center">
+            <p x-text="error"></p>
+            <button @click="cargarCultivos()" class="mt-2 text-sm underline font-bold">Reintentar</button>
         </div>
 
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto" x-show="!cargando && !error">
           <table class="w-full text-left text-sm text-slate-600">
-            <thead class="bg-slate-50 text-xs uppercase font-bold text-slate-500 border-b border-slate-200">
+            <thead class="bg-slate-50 text-xs uppercase font-bold text-slate-500 border-b">
               <tr>
-                <th scope="col" class="px-6 py-3.5">Cultivo</th>
-                <th scope="col" class="px-6 py-3.5">Tipo</th>
-                <th scope="col" class="px-6 py-3.5 text-center">Estado</th>
-                <th scope="col" class="px-6 py-3.5 text-right">Acciones</th>
+                <th class="px-6 py-3.5">Cultivo</th>
+                <th class="px-6 py-3.5">Tipo</th>
+                <th class="px-6 py-3.5 text-center">Estado</th>
+                <th class="px-6 py-3.5 text-right">Acciones</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100">
-              <template x-for="c in cultivosFiltrados" :key="c.id">
-                <tr class="hover:bg-slate-50/80 transition" :class="editandoId === c.id ? 'bg-amber-50/50' : ''">
+              <template x-for="c in cultivosPaginados" :key="c.id">
+                <tr class="hover:bg-slate-50/80 transition">
                   <td class="px-6 py-3.5 font-medium text-slate-900" x-text="c.nombre"></td>
                   <td class="px-6 py-3.5" x-text="c.tipo"></td>
-                  <td class="px-6 py-3.5 text-center">
-                    <span class="inline-flex px-2.5 py-0.5 text-xs font-semibold rounded-xl border"
-                          :class="{
-                            'bg-emerald-50 text-emerald-700 border-emerald-200': c.estado === 'Listo para cosecha',
-                            'bg-blue-50 text-blue-700 border-blue-200': c.estado === 'En crecimiento',
-                            'bg-slate-100 text-slate-600 border-slate-200': c.estado === 'Cosechado'
-                          }"
-                          x-text="c.estado">
-                    </span>
-                  </td>
+                  <td class="px-6 py-3.5 text-center" x-text="c.estado"></td>
                   <td class="px-6 py-3.5 text-right space-x-3">
-                    <button type="button" @click="iniciarEdicion(c)"
-                            class="text-xs text-emerald-700 hover:text-emerald-900 font-semibold cursor-pointer">
-                      Editar
-                    </button>
-                    <button type="button" @click="eliminarCultivo(c.id)"
-                            class="text-xs text-red-600 hover:text-red-800 font-semibold cursor-pointer">
-                      Eliminar
-                    </button>
+                    <button @click="prepararEdicion(c)" class="text-xs text-emerald-700 hover:text-emerald-900 font-semibold">Editar</button>
+                    <button @click="abrirModal(c.id)" class="text-xs text-red-600 hover:text-red-800 font-semibold">Eliminar</button>
                   </td>
                 </tr>
               </template>
-
-              <tr x-show="cultivosFiltrados.length === 0" x-cloak>
-                <td colspan="4" class="px-6 py-8 text-center text-slate-400 italic">
-                  No se encontraron cultivos que coincidan con los criterios.
-                </td>
+              <tr x-show="cultivosFiltrados.length === 0">
+                <td colspan="4" class="px-6 py-8 text-center text-slate-400 italic">No se encontraron cultivos.</td>
               </tr>
             </tbody>
           </table>
+        </div>
+        
+        <div x-show="cultivosFiltrados.length > 0" class="px-6 py-3.5 bg-slate-50/70 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <p class="text-xs text-slate-500">
+            Mostrando <span class="font-semibold text-slate-700" x-text="indiceInicio + 1"></span> a <span class="font-semibold text-slate-700" x-text="Math.min(indiceFin, cultivosFiltrados.length)"></span> de <span class="font-semibold text-slate-700" x-text="cultivosFiltrados.length"></span>
+          </p>
+          <div class="inline-flex items-center gap-1">
+            <button type="button" @click="paginaActual--" :disabled="paginaActual === 1" class="px-2.5 py-1.5 rounded-lg text-xs font-medium border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition">Anterior</button>
+            <template x-for="num in totalPaginas" :key="num">
+              <button type="button" @click="paginaActual = num" :class="paginaActual === num ? 'bg-emerald-800 text-white border-emerald-800 font-bold' : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50 font-medium'" class="w-8 h-8 rounded-lg text-xs border transition cursor-pointer" x-text="num"></button>
+            </template>
+            <button type="button" @click="paginaActual++" :disabled="paginaActual >= totalPaginas" class="px-2.5 py-1.5 rounded-lg text-xs font-medium border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition">Siguiente</button>
+          </div>
         </div>
       </section>
     </div>
@@ -234,180 +359,11 @@
     </div>
   </main>
 
-  <script>
-    document.addEventListener('alpine:init', () => {
-      Alpine.data('cultivosApp', () => ({
-        cultivos: [],
-        busqueda: '',
-        filtroEstado: 'Todos',
-        filtroTipo: 'Todos',
-        editandoId: null,
-        enviando: false,
-
-        formCultivo: {
-          nombre: '',
-          tipo: '',
-          estado: 'Activo'
-        },
-
-        errores: {
-          nombre: '',
-          tipo: ''
-        },
-
-        toast: {
-          visible: false,
-          mensaje: '',
-          tipo: 'exito',
-          timeoutId: null
-        },
-
-        initApp() {
-          const guardados = localStorage.getItem('misCultivos');
-          if (guardados) {
-            try {
-              const parsed = JSON.parse(guardados);
-              if (Array.isArray(parsed) && parsed.length > 0) {
-                this.cultivos = parsed.map((item, idx) => ({
-                  id: item.id || Date.now() + idx,
-                  nombre: item.nombre || '',
-                  tipo: item.tipo || '',
-                  estado: item.estado || 'Activo'
-                }));
-                this.guardarEnStorage();
-                return;
-              }
-            } catch (e) {
-              console.error('Error parseando cultivos locales:', e);
-            }
-          }
-
-          this.cultivos = [
-            { id: 101, nombre: 'Cultivo de Maíz', tipo: 'Maíz', estado: 'En crecimientoivo' },
-            { id: 102, nombre: 'Cultivo de Ají', tipo: 'Ají', estado: 'Listo para cosecha' },
-          ];
-          this.guardarEnStorage();
-        },
-
-        get tiposDisponibles() {
-          const tipos = this.cultivos.map(c => c.tipo.trim()).filter(Boolean);
-          return [...new Set(tipos)];
-        },
-
-        get cultivosFiltrados() {
-          return this.cultivos.filter(c => {
-            const coincideNombre = c.nombre.toLowerCase().includes(this.busqueda.toLowerCase());
-            const coincideEstado = this.filtroEstado === 'Todos' || c.estado === this.filtroEstado;
-            const coincideTipo = this.filtroTipo === 'Todos' || c.tipo.toLowerCase() === this.filtroTipo.toLowerCase();
-            return coincideNombre && coincideEstado && coincideTipo;
-          });
-        },
-
-        limpiarFiltros() {
-          this.busqueda = '';
-          this.filtroEstado = 'Todos';
-          this.filtroTipo = 'Todos';
-        },
-
-        validarFormulario() {
-          let esValido = true;
-          this.errores = { nombre: '', tipo: '' };
-
-          if (!this.formCultivo.nombre) {
-            this.errores.nombre = 'El nombre del cultivo es obligatorio.';
-            esValido = false;
-          }
-          if (!this.formCultivo.tipo) {
-            this.errores.tipo = 'El tipo de cultivo es obligatorio.';
-            esValido = false;
-          }
-
-          return esValido;
-        },
-
-        guardarCultivo() {
-          if (!this.validarFormulario()) return;
-
-          this.enviando = true;
-          setTimeout(() => {
-            if (this.editandoId) {
-              const index = this.cultivos.findIndex(c => c.id === this.editandoId);
-              if (index !== -1) {
-                this.cultivos[index] = {
-                  ...this.cultivos[index],
-                  nombre: this.formCultivo.nombre,
-                  tipo: this.formCultivo.tipo,
-                  estado: this.formCultivo.estado
-                };
-              }
-              this.mostrarToast('Cultivo actualizado correctamente.', 'exito');
-              this.editandoId = null;
-            } else {
-              this.cultivos.push({
-                id: Date.now(),
-                nombre: this.formCultivo.nombre,
-                tipo: this.formCultivo.tipo,
-                estado: this.formCultivo.estado
-              });
-              this.mostrarToast('Cultivo agregado exitosamente.', 'exito');
-            }
-
-            this.guardarEnStorage();
-            this.resetearFormulario();
-            this.enviando = false;
-          }, 250);
-        },
-
-        iniciarEdicion(cultivo) {
-          this.editandoId = cultivo.id;
-          this.formCultivo = {
-            nombre: cultivo.nombre,
-            tipo: cultivo.tipo,
-            estado: cultivo.estado
-          };
-          this.errores = { nombre: '', tipo: '' };
-        },
-
-        cancelarEdicion() {
-          this.editandoId = null;
-          this.resetearFormulario();
-        },
-
-        eliminarCultivo(id) {
-          if (this.editandoId === id) {
-            this.cancelarEdicion();
-          }
-          this.cultivos = this.cultivos.filter(c => c.id !== id);
-          this.guardarEnStorage();
-          this.mostrarToast('Cultivo eliminado.', 'exito');
-        },
-
-        resetearFormulario() {
-          this.formCultivo = {
-            nombre: '',
-            tipo: '',
-            estado: 'Activo'
-          };
-          this.errores = { nombre: '', tipo: '' };
-        },
-
-        guardarEnStorage() {
-          localStorage.setItem('misCultivos', JSON.stringify(this.cultivos));
-        },
-
-        mostrarToast(mensaje, tipo = 'exito') {
-          if (this.toast.timeoutId) clearTimeout(this.toast.timeoutId);
-          this.toast.mensaje = mensaje;
-          this.toast.tipo = tipo;
-          this.toast.visible = true;
-
-          this.toast.timeoutId = setTimeout(() => {
-            this.toast.visible = false;
-          }, 3000);
-        }
-      }));
-    });
-  </script>
+  <script type="module">
+  import { api } from './js/api.js';
+  import { protegerRuta, configurarCerrarSesion } from './js/guardia.js';
+  protegerRuta(); configurarCerrarSesion(); window.api = api;
+</script>
     
 </body>
 </html>
