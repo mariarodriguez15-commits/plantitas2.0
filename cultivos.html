@@ -323,7 +323,7 @@
               <template x-for="c in cultivosPaginados" :key="c.id">
                 <tr class="hover:bg-slate-50/80 transition">
                   <td class="px-6 py-3.5 font-medium text-slate-900">
-                    <a :href="'detalle-cultivo.html?id=' + c.id" class="hover:text-emerald-700 hover:underline transition" x-text="c.nombre"></a>
+                    <a :href="'detallecultivo.html?id=' + c.id" class="hover:text-emerald-700 hover:underline transition" x-text="c.nombre"></a>
                   </td>
                   <td class="px-6 py-3.5" x-text="c.tipo"></td>
                   <td class="px-6 py-3.5 text-center" x-text="c.estado"></td>
