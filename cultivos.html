@@ -6,6 +6,9 @@
     <title>Cultivos</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+    [x-cloak] { display: none !important; }
+  </style>
 </head>
 <body class="bg-white text-slate-800 font-sans antialiased min-h-screen flex flex-col">
     <header class="bg-emerald-900 text-white shadow-md sticky top-0 z-50" x-data="{ menuAbierto: false }">
@@ -64,7 +67,7 @@
       </nav>
   </header>
 
-  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+  <main x-data="cultivosApp" x-init="initApp()" class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
     <section class="bg-white p-6 border border-slate-500 shadow-xs">
       <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
@@ -112,107 +115,301 @@
         </div>
       </div>
     </section>
-
-    
-</main>
-    <div x-data="{nombreCultivo:'', tipoCultivo:'', cultivo: [],
-    init(){
-        const guardados = localStorage.getItem('misCultivos');
-        if(guardados){
-            this.cultivo = JSON.parse(guardados);
-        }
-    },
-    
-    agregarCultivo(){
-        if(this.nombreCultivo.trim() !== '' && this.tipoCultivo.trim() !== ''){
-            this.cultivo.push({
-                nombre: this.nombreCultivo,
-                tipo: this.tipoCultivo
-            });
-
-            localStorage.setItem('misCultivos',JSON.stringify(this.cultivo));
-            this.nombreCultivo = '';
-            this.tipoCultivo = '';
-        }
-
-    }
-    }" x-init="init()">
-
-        <section class="bg-white p-6 border border-slate-700 mx-96 m-4 ">
-        <h2 class="bg-emerald-900 text-slate-200 text-center m-2 text-2xl rounded-sm g-2">Agregar Nuevo Cultivo</h2>
-
-            <form @submit.prevent="agregarCultivo()" class="space-y-4">
-                
-                <div>
-                    <label for="nombreCultivo" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
-                        Nombre
-                    </label>
-                    <input
-                    type="text"
-                    x-model="nombreCultivo" 
-                    name="nombreCultivo" required
-                    placeholder="Ej:Cultivo A"
-                    class="w-full border border-slate-400 px-3.5 py-2 text-sm text-slate-800 placeholder-slate-400">
-                </div>
-            
-                <div>
-                    <label for="tipoCultivo" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
-                        Tipo
-                    </label>
-                    <input 
-                    type="text" 
-                    x-model="tipoCultivo" 
-                    name="tipoCultivo" required
-                    placeholder="Ej:Maíz"
-                    class="w-full border border-slate-400 px-3.5 py-2 text-sm text-slate-800 placeholder-slate-400">
-                </div>
-
-                <button type="submit" class="w-full mt-2 bg-emerald-800 hover:bg-emerald-700 active:scale-[0.99] text-white font-medium py-2.5 px-4 text-sm transition duration-150 shadow-sm cursor-pointer disabled:opacity-50">
-                    Agregar
-                </button>
-
-
-
-            </form>
-        </section>
-        
-        <section class="bg-slate-100 p-6 border border-slate-500 mx-auto max-w-2xl shadow-md flex flex-col m-4 ">
-        <h2 class="bg-emerald-900 text-slate-200 text-2xl text-center rounded-sm p-4 shadow-md font-semibold">
-            Listado de Cultivos
-        </h2>
-        <div class="overflow-x-auto">
-            <table class="bg-slate-200 text-base text-center w-full rounded-lg">
-                <thead class="bg-slate-200 text-slate-700 text-lg uppercase ">
-                    <tr>
-                        <th class="p-3">Cultivo</th>
-                        <th class="p-3">Tipo</th>
-                        <th class="p-3">Estado</th>
-                    </tr>
-                </thead>
-                <tbody class ="divide-y divide-slate-200">
-                    <template x-for="(c,index) in cultivo" :key ="index">
-                        <tr class="hover:bg-slate-50">
-                            <td class="p-3 font-medium text-slate-700" x-text="c.nombre">Cultivo 1</td>
-                            <td class="p-3 font-medium text-slate-700" x-text="c.tipo">Maíz</td>
-                            <td class="p-3">Estado</td>
-                        </tr>
-                    </template>
-                </tbody>
-            </table>
-
-            <p x-show="cultivo.length ==0" class="text-center text-sm text-slate-400 py-4"></p>
+  
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <section class="bg-white p-6 border border-slate-500 lg:col-span-1 self-start">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-xl font-bold text-slate-900" x-text="editandoId ? 'Editar Cultivo' : 'Agregar Nuevo Cultivo'"></h3>
+          <span x-show="editandoId" x-cloak class="px-2 py-0.5 text-xs font-semibold bg-amber-100 text-amber-800 rounded">
+            Editando
+          </span>
         </div>
-        
-        </section>
 
+        <form @submit.prevent="guardarCultivo()" class="space-y-4">
+          <div>
+            <label for="nombreCultivo" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
+              Nombre
+            </label>
+            <input type="text" id="nombreCultivo" x-model.trim="formCultivo.nombre" placeholder="Ej: Cultivo A" required
+                   class="w-full border border-slate-400 px-3.5 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
+            <span x-show="errores.nombre" x-text="errores.nombre" class="text-xs text-red-600 mt-1 block" x-cloak></span>
+          </div>
+
+          <div>
+            <label for="tipoCultivo" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
+              Tipo
+            </label>
+            <input type="text" id="tipoCultivo" x-model.trim="formCultivo.tipo" placeholder="Ej: Maíz" required
+                   class="w-full border border-slate-400 px-3.5 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
+            <span x-show="errores.tipo" x-text="errores.tipo" class="text-xs text-red-600 mt-1 block" x-cloak></span>
+          </div>
+
+          <div>
+            <label for="estadoCultivo" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">
+              Estado
+            </label>
+            <select id="estadoCultivo" x-model="formCultivo.estado"
+                    class="w-full border border-slate-400 bg-white px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
+              <option value="Activo">Activo</option>
+              <option value="En crecimiento">En crecimiento</option>
+              <option value="Cosechado">Cosechado</option>
+              <option value="En alerta">En alerta</option>
+            </select>
+          </div>
+
+          <div class="flex gap-2 pt-2">
+            <button type="submit" :disabled="enviando"
+                    class="flex-1 bg-emerald-800 hover:bg-emerald-700 active:scale-[0.99] text-white font-medium py-2.5 px-4 text-sm transition duration-150 shadow-sm cursor-pointer disabled:opacity-50">
+              <span x-text="enviando ? 'Guardando...' : (editandoId ? 'Guardar Cambios' : '+ Agregar Cultivo')"></span>
+            </button>
+
+            <button type="button" x-show="editandoId" @click="cancelarEdicion()" x-cloak
+                    class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-medium py-2.5 px-4 text-sm transition duration-150 cursor-pointer">
+              Cancelar
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <section class="bg-white border border-slate-500 overflow-hidden lg:col-span-2">
+        <div class="p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-slate-100">
+          <div>
+            <h3 class="text-2xl font-bold text-slate-900">Listado de Cultivos</h3>
+            <p class="text-xs text-slate-500 mt-0.5">Cultivos registrados en el sistema</p>
+          </div>
+          <span class="inline-flex items-center self-start sm:self-auto px-3 py-1 text-xs font-bold text-emerald-800 bg-emerald-50 rounded-full border border-emerald-200"
+                x-text="cultivosFiltrados.length + ' cultivo(s)'">
+          </span>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm text-slate-600">
+            <thead class="bg-slate-50 text-xs uppercase font-bold text-slate-500 border-b border-slate-200">
+              <tr>
+                <th scope="col" class="px-6 py-3.5">Cultivo</th>
+                <th scope="col" class="px-6 py-3.5">Tipo</th>
+                <th scope="col" class="px-6 py-3.5 text-center">Estado</th>
+                <th scope="col" class="px-6 py-3.5 text-right">Acciones</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <template x-for="c in cultivosFiltrados" :key="c.id">
+                <tr class="hover:bg-slate-50/80 transition" :class="editandoId === c.id ? 'bg-amber-50/50' : ''">
+                  <td class="px-6 py-3.5 font-medium text-slate-900" x-text="c.nombre"></td>
+                  <td class="px-6 py-3.5" x-text="c.tipo"></td>
+                  <td class="px-6 py-3.5 text-center">
+                    <span class="inline-flex px-2.5 py-0.5 text-xs font-semibold rounded-xl border"
+                          :class="{
+                            'bg-emerald-50 text-emerald-700 border-emerald-200': c.estado === 'Activo',
+                            'bg-blue-50 text-blue-700 border-blue-200': c.estado === 'En crecimiento',
+                            'bg-slate-100 text-slate-600 border-slate-200': c.estado === 'Cosechado',
+                            'bg-red-50 text-red-700 border-red-200': c.estado === 'En alerta'
+                          }"
+                          x-text="c.estado">
+                    </span>
+                  </td>
+                  <td class="px-6 py-3.5 text-right space-x-3">
+                    <button type="button" @click="iniciarEdicion(c)"
+                            class="text-xs text-emerald-700 hover:text-emerald-900 font-semibold cursor-pointer">
+                      Editar
+                    </button>
+                    <button type="button" @click="eliminarCultivo(c.id)"
+                            class="text-xs text-red-600 hover:text-red-800 font-semibold cursor-pointer">
+                      Eliminar
+                    </button>
+                  </td>
+                </tr>
+              </template>
+
+              <tr x-show="cultivosFiltrados.length === 0" x-cloak>
+                <td colspan="4" class="px-6 py-8 text-center text-slate-400 italic">
+                  No se encontraron cultivos que coincidan con los criterios.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
     </div>
-    
-  <script type="module">
-    import { protegerRuta, configurarCerrarSesion } from './js/guardia.js';
-    
-    protegerRuta(); // 
-    configurarCerrarSesion(); 
-  </script>
+    <div x-show="toast.visible" x-transition x-cloak class="fixed bottom-5 right-5 bg-emerald-900 text-white px-4 py-3 rounded-lg shadow-lg text-sm font-medium z-50">
+        <span x-text="toast.mensaje"></span>
+    </div>
+  </main>
 
+  <script>
+    document.addEventListener('alpine:init', () => {
+      Alpine.data('cultivosApp', () => ({
+        cultivos: [],
+        busqueda: '',
+        filtroEstado: 'Todos',
+        filtroTipo: 'Todos',
+        editandoId: null,
+        enviando: false,
+
+        formCultivo: {
+          nombre: '',
+          tipo: '',
+          estado: 'Activo'
+        },
+
+        errores: {
+          nombre: '',
+          tipo: ''
+        },
+
+        toast: {
+          visible: false,
+          mensaje: '',
+          tipo: 'exito',
+          timeoutId: null
+        },
+
+        initApp() {
+          const guardados = localStorage.getItem('misCultivos');
+          if (guardados) {
+            try {
+              const parsed = JSON.parse(guardados);
+              if (Array.isArray(parsed) && parsed.length > 0) {
+                this.cultivos = parsed.map((item, idx) => ({
+                  id: item.id || Date.now() + idx,
+                  nombre: item.nombre || '',
+                  tipo: item.tipo || '',
+                  estado: item.estado || 'Activo'
+                }));
+                this.guardarEnStorage();
+                return;
+              }
+            } catch (e) {
+              console.error('Error parseando cultivos locales:', e);
+            }
+          }
+
+          this.cultivos = [
+            { id: 101, nombre: 'Cultivo de Maíz', tipo: 'Maíz', estado: 'Activo' },
+            { id: 102, nombre: 'Cultivo de Ají', tipo: 'Ají', estado: 'En alerta' },
+          ];
+          this.guardarEnStorage();
+        },
+
+        get tiposDisponibles() {
+          const tipos = this.cultivos.map(c => c.tipo.trim()).filter(Boolean);
+          return [...new Set(tipos)];
+        },
+
+        get cultivosFiltrados() {
+          return this.cultivos.filter(c => {
+            const coincideNombre = c.nombre.toLowerCase().includes(this.busqueda.toLowerCase());
+            const coincideEstado = this.filtroEstado === 'Todos' || c.estado === this.filtroEstado;
+            const coincideTipo = this.filtroTipo === 'Todos' || c.tipo.toLowerCase() === this.filtroTipo.toLowerCase();
+            return coincideNombre && coincideEstado && coincideTipo;
+          });
+        },
+
+        limpiarFiltros() {
+          this.busqueda = '';
+          this.filtroEstado = 'Todos';
+          this.filtroTipo = 'Todos';
+        },
+
+        validarFormulario() {
+          let esValido = true;
+          this.errores = { nombre: '', tipo: '' };
+
+          if (!this.formCultivo.nombre) {
+            this.errores.nombre = 'El nombre del cultivo es obligatorio.';
+            esValido = false;
+          }
+          if (!this.formCultivo.tipo) {
+            this.errores.tipo = 'El tipo de cultivo es obligatorio.';
+            esValido = false;
+          }
+
+          return esValido;
+        },
+
+        guardarCultivo() {
+          if (!this.validarFormulario()) return;
+
+          this.enviando = true;
+          setTimeout(() => {
+            if (this.editandoId) {
+              const index = this.cultivos.findIndex(c => c.id === this.editandoId);
+              if (index !== -1) {
+                this.cultivos[index] = {
+                  ...this.cultivos[index],
+                  nombre: this.formCultivo.nombre,
+                  tipo: this.formCultivo.tipo,
+                  estado: this.formCultivo.estado
+                };
+              }
+              this.mostrarToast('Cultivo actualizado correctamente.', 'exito');
+              this.editandoId = null;
+            } else {
+              this.cultivos.push({
+                id: Date.now(),
+                nombre: this.formCultivo.nombre,
+                tipo: this.formCultivo.tipo,
+                estado: this.formCultivo.estado
+              });
+              this.mostrarToast('Cultivo agregado exitosamente.', 'exito');
+            }
+
+            this.guardarEnStorage();
+            this.resetearFormulario();
+            this.enviando = false;
+          }, 250);
+        },
+
+        iniciarEdicion(cultivo) {
+          this.editandoId = cultivo.id;
+          this.formCultivo = {
+            nombre: cultivo.nombre,
+            tipo: cultivo.tipo,
+            estado: cultivo.estado
+          };
+          this.errores = { nombre: '', tipo: '' };
+        },
+
+        cancelarEdicion() {
+          this.editandoId = null;
+          this.resetearFormulario();
+        },
+
+        eliminarCultivo(id) {
+          if (this.editandoId === id) {
+            this.cancelarEdicion();
+          }
+          this.cultivos = this.cultivos.filter(c => c.id !== id);
+          this.guardarEnStorage();
+          this.mostrarToast('Cultivo eliminado.', 'exito');
+        },
+
+        resetearFormulario() {
+          this.formCultivo = {
+            nombre: '',
+            tipo: '',
+            estado: 'Activo'
+          };
+          this.errores = { nombre: '', tipo: '' };
+        },
+
+        guardarEnStorage() {
+          localStorage.setItem('misCultivos', JSON.stringify(this.cultivos));
+        },
+
+        mostrarToast(mensaje, tipo = 'exito') {
+          if (this.toast.timeoutId) clearTimeout(this.toast.timeoutId);
+          this.toast.mensaje = mensaje;
+          this.toast.tipo = tipo;
+          this.toast.visible = true;
+
+          this.toast.timeoutId = setTimeout(() => {
+            this.toast.visible = false;
+          }, 3000);
+        }
+      }));
+    });
+  </script>
+    
 </body>
 </html>
