@@ -179,6 +179,21 @@
                 <p><strong class="text-slate-700">Cosechado:</strong> Ciclo finalizado y registrado en historial.</p>
               </div>
             </div>
+            <div>
+              <button type="button"
+                      @click="acordeonAbierto = acordeonAbierto === 3 ? null : 3"
+                      class="w-full px-5 py-3 text-left text-sm font-semibold text-slate-800 hover:bg-slate-50 flex items-center justify-between transition cursor-pointer">
+                <span>3. Recomendación al registrar</span>
+                <svg class="w-4 h-4 text-slate-500 transition-transform duration-200 shrink-0"
+                     :class="acordeonAbierto === 3 ? 'rotate-180 text-emerald-800' : ''"
+                     fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              <div x-show="acordeonAbierto === 3" x-cloak class="px-5 pb-4 pt-1 text-xs text-slate-600 space-y-1.5 leading-relaxed bg-slate-50/40">
+                <p>Usa nombres identificables por sector (ej. <em>Parcela Norte - Maíz</em>).</p>
+              </div>
+            </div>
           </div>
         </section>
 
