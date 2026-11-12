@@ -10,7 +10,7 @@
 </head>
 <body class="bg-white text-slate-800 font-sans antialiased min-h-screen flex flex-col">
     
-    <header class="bg-emerald-900 text-white shadow-md sticky top-0 z-50" x-data="{ menuAbierto: false }">
+  <header class="bg-emerald-900 text-white shadow-md sticky top-0 z-50" x-data="{ menuAbierto: false }">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-16">
         <h1 class="text-2xl font-bold tracking-wide text-white leading-none">CultivaWeb</h1>
@@ -25,14 +25,15 @@
             <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
           </button>
         </div>
-    </div>
+      </div>
       <nav x-show="menuAbierto" x-cloak class="md:hidden py-3 border-t border-emerald-800 flex flex-col items-end space-y-1">
         <a href="panel.html" class="w-full text-right px-4 py-2 text-sm font-semibold text-emerald-100 hover:bg-emerald-800">Inicio</a>
         <a href="cultivos.html" class="w-full text-right px-4 py-2 text-sm font-bold bg-emerald-800 text-white">Cultivos</a>
         <a href="sensores.html" class="w-full text-right px-4 py-2 text-sm font-semibold text-emerald-100 hover:bg-emerald-800">Sensores</a>
         <a href="index.html" class="w-full text-right px-4 py-2 text-sm font-semibold text-red-300 hover:bg-red-900/50">Cerrar Sesión</a>
       </nav>
-  </header>
+      </div>
+    </header>
 
   <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6" x-data="{
     cultivos: [], 
