@@ -69,12 +69,11 @@
       return [...new Set(tipos)];
     },
 
-    get cultivosFiltrados() {
+      const filtrados = this.cultivos.filter(c => {
       const filtrados = this.cultivos.filter(c => {
         const coincideNombre = (c.nombre || '').toLowerCase().includes(this.busqueda.toLowerCase());
         const coincideEstado = this.filtroEstado === 'Todos' || c.estado === this.filtroEstado;
         const coincideTipo = this.filtroTipo === 'Todos' || (c.tipo || '').toLowerCase() === this.filtroTipo.toLowerCase();
-        return coincideNombre && coincideEstado && coincideTipo;
       });
 
       return [...filtrados].sort((a, b) => {
@@ -86,6 +85,22 @@
         }
         if (this.ordenarPor === 'antiguos') {
           return Number(a.id) - Number(b.id);
+        }
+        // Por defecto: 'recientes' (ID mayor primero)
+        return Number(b.id) - Number(a.id);
+      });
+      });
+
+      return [...filtrados].sort((a, b) => {
+        if (this.ordenarPor === 'nombre_asc') {
+          return (a.nombre || '').localeCompare(b.nombre || '', 'es', { sensitivity: 'base' });
+        }
+        if (this.ordenarPor === 'nombre_desc') {
+          return (b.nombre || '').localeCompare(a.nombre || '', 'es', { sensitivity: 'base' });
+        }
+        if (this.ordenarPor === 'antiguos') {
+      this.filtroTipo = 'Todos';
+      this.ordenarPor = 'recientes';
         }
         // Por defecto: 'recientes' (ID mayor primero)
         return Number(b.id) - Number(a.id);
@@ -118,9 +133,16 @@
       this.ordenarPor = 'recientes';
       this.paginaActual = 1;
     },
-    
-    async cargarCultivos() {
-      this.cargando = true; 
+          this.mostrarToast(
+            esEdicion ? 'Cultivo actualizado correctamente.' : 'Cultivo agregado correctamente.',
+            'success'
+          );
+        } else {
+          this.mostrarToast(res.error || 'Error al guardar el cultivo.', 'error');
+        }
+      } catch (e) {
+        this.mostrarToast('Error de conexión al guardar.', 'error');
+      }
       this.error = null;
       try {
         const res = await window.api.cultivos.listar();
@@ -144,8 +166,12 @@
       try {
         const esEdicion = Boolean(this.editandoId);
         let res = esEdicion 
-          ? await window.api.cultivos.actualizar(this.editandoId, this.formCultivo) 
-          : await window.api.cultivos.crear(this.formCultivo);
+          this.modalAbierto = false;
+          this.mostrarToast(res.error || 'No se pudo eliminar el cultivo.', 'error');
+      } catch (e) {
+        this.modalAbierto = false;
+        this.mostrarToast('Error de conexión al eliminar.', 'error');
+      }
         if (res.ok) { 
           this.cancelarEdicion(); 
           await this.cargarCultivos();
@@ -175,7 +201,16 @@
       this.formCultivo = { nombre: '', tipo: '', estado: 'En crecimiento' }; 
     },
     
-    abrirModal(id) { 
+          <div>
+            <label for="ordenarCultivos" class="sr-only">Ordenar por</label>
+            <select id="ordenarCultivos" x-model="ordenarPor" @change="paginaActual = 1" class="w-full sm:w-auto border border-slate-400 bg-white px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
+              <option value="recientes">Orden: Más recientes</option>
+              <option value="antiguos">Orden: Más antiguos</option>
+              <option value="nombre_asc">Nombre: A - Z</option>
+              <option value="nombre_desc">Nombre: Z - A</option>
+            </select>
+          </div>
+          <button type="button" x-show="busqueda !== '' || filtroEstado !== 'Todos' || filtroTipo !== 'Todos' || ordenarPor !== 'recientes'" @click="limpiarFiltros()" class="px-3.5 py-2 text-xs font-semibold text-slate-600 hover:text-slate-900 border border-slate-300 hover:bg-slate-100 transition cursor-pointer">Limpiar</button>
       this.cultivoAEliminar = id; 
       this.modalAbierto = true; 
     },
