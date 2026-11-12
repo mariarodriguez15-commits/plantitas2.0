@@ -201,17 +201,17 @@
           <form @submit.prevent="guardarSensor" class="space-y-4" novalidate>
             <div>
               <label for="identificadorSensor" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">Identificador</label>
-              <input id="identificadorSensor" type="text" x-model.trim="formSensor.nombre" placeholder="Ej: Sensor Temp-01" class="w-full border border-slate-400 rounded-lg px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+              <input id="identificadorSensor" type="text" x-model.trim="formSensor.nombre" placeholder="Ej: Sensor Temp-01" class="w-full border border-slate-400 px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
               <span x-show="errores.nombre" x-text="errores.nombre" x-cloak class="text-xs text-red-600 mt-1 block font-medium"></span>
             </div>
             <div>
               <label for="tipoMedicionSensor" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">Tipo de Medición</label>
-              <input id="tipoMedicionSensor" type="text" x-model.trim="formSensor.tipo" placeholder="Ej: Temperatura" class="w-full border border-slate-400 rounded-lg px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+              <input id="tipoMedicionSensor" type="text" x-model.trim="formSensor.tipo" placeholder="Ej: Temperatura" class="w-full border border-slate-400 px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
               <span x-show="errores.tipo" x-text="errores.tipo" x-cloak class="text-xs text-red-600 mt-1 block font-medium"></span>
             </div>
             <div>
               <label for="estadoSensor" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">Estado</label>
-              <select id="estadoSensor" x-model="formSensor.estado" class="w-full border border-slate-400 rounded-lg bg-white px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+              <select id="estadoSensor" x-model="formSensor.estado" class="w-full border border-slate-400  bg-white px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
                 <option value="Activo">Activo</option>
                 <option value="Desconectado">Desconectado</option>
                 <option value="Alerta">Alerta</option>
@@ -220,12 +220,12 @@
             </div>
             <div class="flex gap-2 pt-2">
               <button type="submit" :disabled="enviando"
-                      class="flex-1 bg-emerald-800 hover:bg-emerald-700 active:scale-[0.99] text-white font-medium py-2.5 px-4 rounded-lg text-sm transition disabled:opacity-50 cursor-pointer shadow-sm">
+                      class="flex-1 bg-emerald-800 hover:bg-emerald-700 active:scale-[0.99] text-white font-medium py-2.5 px-4  text-sm transition disabled:opacity-50 cursor-pointer shadow-sm">
                 <span x-text="enviando ? 'Guardando...' : (editandoId ? 'Guardar Cambios' : '+ Registrar Sensor')"></span>
               </button>
 
               <button type="button" x-show="editandoId" @click="cancelarEdicion()" x-cloak
-                      class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-medium py-2.5 px-4 rounded-lg text-sm transition cursor-pointer">
+                      class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-medium py-2.5 px-4  text-sm transition cursor-pointer">
                 Cancelar
               </button>
             </div>
