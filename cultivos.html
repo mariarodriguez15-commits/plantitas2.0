@@ -188,17 +188,16 @@
         <div class="flex flex-col sm:flex-row sm:items-center gap-3">
           <div class="relative">
             <label for="busquedaCultivo" class="sr-only">Buscar por nombre</label>
-            <input type="text" id="busquedaCultivo" x-model.trim="busqueda" placeholder="Buscar cultivo..."
-                   class="w-full sm:w-56 border border-slate-400 bg-white px-3.5 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
+            <input type="text" id="busquedaCultivo" x-model.trim="busqueda" placeholder="Buscar cultivo..." class="w-full sm:w-56 border border-slate-400 bg-white px-3.5 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
           </div>
 
           <div>
             <label for="filtroEstado" class="sr-only">Filtrar por estado</label>
-            <select id="filtroEstado" x-model="filtroEstado"
+            <select id="filtroEstado" x-model="filtroEstado" @change="paginaActual = 1"
                     class="w-full sm:w-auto border border-slate-400 bg-white px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
               <option value="Todos">Todos los estados</option>
-              <option value="Cosechado">Listo para cosecha</option>
               <option value="En crecimiento">En crecimiento</option>
+              <option value="Listo para cosecha">Listo para cosecha</option>
               <option value="Cosechado">Cosechado</option>
               
             </select>
@@ -206,7 +205,7 @@
 
           <div>
             <label for="filtroTipo" class="sr-only">Filtrar por tipo</label>
-            <select id="filtroTipo" x-model="filtroTipo"
+            <select id="filtroTipo" x-model="filtroTipo" @change="paginaActual = 1"
                     class="w-full sm:w-auto border border-slate-400 bg-white px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
               <option value="Todos">Todos los tipos</option>
               <template x-for="tipo in tiposDisponibles" :key="tipo">
@@ -261,8 +260,8 @@
             <select id="estadoCultivo" x-model="formCultivo.estado"
                     class="w-full border border-slate-400 bg-white px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
               <option value="En crecimiento">En crecimiento</option>
+              <option value="Listo para cosecha">Listo para cosecha</option>
               <option value="Cosechado">Cosechado</option>
-              <option value="Cosechado">Listo para cosecha</option>
             </select>
           </div>
 
@@ -354,7 +353,7 @@
         </div>
       </section>
     </div>
-    <div x-show="toast.visible" x-transition x-cloak class="fixed bottom-5 right-5 bg-emerald-900 text-white px-4 py-3 rounded-lg shadow-lg text-sm font-medium z-50">
+    <div x-show="toast.visible" x-transition x-cloak class="fixed bottom-5 right-5 bg-emerald-700 text-white px-4 py-3 rounded-lg shadow-lg text-sm font-medium z-50">
         <span x-text="toast.mensaje"></span>
     </div>
   </main>
