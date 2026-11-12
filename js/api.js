@@ -104,6 +104,9 @@ export const api = {
     async crear(datos) {
       return await pedir('POST', '/sensores', datos);
     },
+    async actualizar(id, datos) {
+      return await pedir('PUT', `/sensores/${id}`, datos);
+    },
     async eliminar(id) {
       return await pedir('DELETE', `/sensores/${id}`);
     }
