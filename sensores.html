@@ -105,10 +105,10 @@
       this.enviando = true;
       try {
         const esEdicion = Boolean(this.editandoId);
+        const payload = { ...this.formSensor, cultivoId: this.cultivoFiltroId };
         const res = esEdicion
-          ? await window.api.sensores.actualizar(this.editandoId, this.formSensor)
-          : await window.api.sensores.crear({ ...this.formSensor, cultivoId: this.cultivoFiltroId });
-
+          ? await window.api.sensores.actualizar(this.editandoId, payload)
+          : await window.api.sensores.crear(payload);
         if (res.ok) {
           const resLista = await window.api.sensores.listar();
           if (resLista.ok) this.sensores = resLista.data;
@@ -159,6 +159,8 @@
           this.modalAbierto = false;
           this.sensorAEliminar = null;
           this.mostrarToast('Sensor eliminado correctamente.', 'error');
+        } else {
+          this.mostrarToast(res.error || 'No se pudo eliminar el sensor.', 'error');
         }
       } catch (e) {
         this.mostrarToast('Error al eliminar el sensor.', 'error');
