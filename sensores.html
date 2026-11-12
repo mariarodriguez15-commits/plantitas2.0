@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sensores - CultivaWeb</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <style>[x-cloak] { display: none !important; }</style>
+</head>
+<body class="min-h-screen bg-slate-50 text-slate-800 flex flex-col">
+  
+  <header class="bg-emerald-900 text-white shadow-md sticky top-0 z-50" x-data="{ menuAbierto: false }">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <h1 class="text-2xl font-bold tracking-wide text-white leading-none">CultivaWeb</h1>
+        <nav class="hidden md:flex items-center gap-2">
+          <a href="panel.html" class="px-3.5 py-2 text-sm font-medium text-emerald-100 hover:bg-emerald-800/60 hover:text-white transition">Panel principal</a>
+          <a href="cultivos.html" class="px-3.5 py-2 text-sm font-medium text-emerald-100 hover:bg-emerald-800/60 hover:text-white transition">Cultivos</a>
+          <a href="sensores.html" aria-current="page" class="px-3.5 py-2 text-sm font-semibold bg-emerald-800 text-white shadow-inner">Sensores</a>
+          <a href="index.html" class="px-3.5 py-2 text-sm font-medium text-red-200 hover:bg-red-900/40 hover:text-white transition">Cerrar Sesión</a>
+        </nav>
+        <div class="flex md:hidden">
+          <button @click="menuAbierto = !menuAbierto" type="button" class="p-2 rounded-xl text-emerald-200 hover:text-white hover:bg-emerald-800 ml-auto">
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+          </button>
+        </div>
+      </div>
+      <nav x-show="menuAbierto" x-cloak class="md:hidden py-3 border-t border-emerald-800 flex flex-col items-end space-y-1">
+        <a href="panel.html" class="w-full text-right px-4 py-2 text-sm font-semibold text-emerald-100 hover:bg-emerald-800">Inicio</a>
+        <a href="cultivos.html" class="w-full text-right px-4 py-2 text-sm font-semibold text-emerald-100 hover:bg-emerald-800">Cultivos</a>
+        <a href="sensores.html" class="w-full text-right px-4 py-2 text-sm font-bold bg-emerald-800 text-white">Sensores</a>
+        <a href="index.html" class="w-full text-right px-4 py-2 text-sm font-semibold text-red-300 hover:bg-red-900/50">Cerrar Sesión</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6" x-data="{
+    cultivosDisponibles: [], 
+    sensores: [], 
+    cultivoFiltroId: null,
+    cargando: true, 
+    error: null, 
+    enviando: false,
+    editandoId: null,
+    modalAbierto: false,
+    sensorAEliminar: null,
+    formSensor: { nombre: '', tipo: '', estado: 'Activo' }, 
+    errores: { nombre: '', tipo: '' },
+    toast: { visible: false, mensaje: '', tipo: 'success', timer: null },
+
+    mostrarToast(mensaje, tipo = 'success') {
+      if (this.toast.timer) clearTimeout(this.toast.timer);
+      this.toast.mensaje = mensaje;
+      this.toast.tipo = tipo;
+      this.toast.visible = true;
+      this.toast.timer = setTimeout(() => {
+        this.toast.visible = false;
+      }, 3200);
+    },
+
+    async init() {
+      setTimeout(async () => {
+        await this.cargarDatos();
+      }, 100);
+    },
+
+    async cargarDatos() {
+      this.cargando = true; 
+      this.error = null;
+      try {
+        const [resCultivos, resSensores] = await Promise.all([
+          window.api.cultivos.listar(), 
+          window.api.sensores.listar()
+        ]);
+        if (resCultivos.ok && resSensores.ok) {
+          this.cultivosDisponibles = resCultivos.data;
+          this.sensores = resSensores.data;
+          if (this.cultivosDisponibles.length > 0 && !this.cultivoFiltroId) {
+            this.cultivoFiltroId = this.cultivosDisponibles[0].id;
+          }
+        } else { 
+          this.error = 'No se pudieron cargar los datos.'; 
+        }
+      } catch (e) {
+        this.error = 'Error de conexión.';
+      }
+      this.cargando = false;
+    },
+   
+    get sensoresFiltrados() { 
+      return this.sensores.filter(s => Number(s.cultivoId) === Number(this.cultivoFiltroId)); 
+    },
+    
+    async guardarSensor() {
+      this.errores = { nombre: '', tipo: '' };
+      if (!this.cultivoFiltroId) {
+        this.mostrarToast('Debes seleccionar un cultivo primero.', 'error');
+        return;
+      }
+      if (!this.formSensor.nombre) this.errores.nombre = 'El identificador es obligatorio.';
+      if (!this.formSensor.tipo) this.errores.tipo = 'El tipo de medición es obligatorio.';
+      if (this.errores.nombre || this.errores.tipo) return;
+
+      this.enviando = true;
+      try {
+        const esEdicion = Boolean(this.editandoId);
+        const payload = { ...this.formSensor, cultivoId: this.cultivoFiltroId };
+        const res = esEdicion
+          ? await window.api.sensores.actualizar(this.editandoId, payload)
+          : await window.api.sensores.crear(payload);
+        if (res.ok) {
+          const resLista = await window.api.sensores.listar();
+          if (resLista.ok) this.sensores = resLista.data;
+          this.cancelarEdicion();
+          this.mostrarToast(
+            esEdicion ? 'Sensor actualizado correctamente.' : 'Sensor registrado correctamente.',
+            'success'
+          );
+        } else {
+          this.mostrarToast(res.error || 'Error al guardar el sensor.', 'error');
+        }
+      } catch (e) {
+        this.mostrarToast('Error de conexión al guardar.', 'error');
+      }
+      this.enviando = false;
+    },
+
+    prepararEdicion(sensor) {
+      this.errores = { nombre: '', tipo: '' };
+      this.editandoId = sensor.id;
+      this.formSensor = {
+        nombre: sensor.nombre,
+        tipo: sensor.tipo,
+        estado: sensor.estado
+      };
+      this.mostrarToast(`Editando sensor: ${sensor.nombre}`, 'info');
+    },
+
+    cancelarEdicion() {
+      this.editandoId = null;
+      this.errores = { nombre: '', tipo: '' };
+      this.formSensor = { nombre: '', tipo: '', estado: 'Activo' };
+    },
+    
+    abrirModal(sensor) {
+      this.sensorAEliminar = sensor;
+      this.modalAbierto = true;
+    },
+
+    async confirmarEliminar() {
+      if (!this.sensorAEliminar) return;
+      try {
+        const idEliminar = this.sensorAEliminar.id;
+        const res = await window.api.sensores.eliminar(idEliminar);
+        if (res.ok) {
+          this.sensores = this.sensores.filter(s => s.id !== idEliminar);
+          if (this.editandoId === idEliminar) this.cancelarEdicion();
+          this.modalAbierto = false;
+          this.sensorAEliminar = null;
+          this.mostrarToast('Sensor eliminado correctamente.', 'error');
+        } else {
+          this.mostrarToast(res.error || 'No se pudo eliminar el sensor.', 'error');
+        }
+      } catch (e) {
+        this.mostrarToast('Error al eliminar el sensor.', 'error');
+      }
+    }
+  }" x-init="init()">
+
+    <section class="bg-white p-6 border border-slate-500">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h2 class="text-xl font-bold text-slate-900">Seleccione el cultivo</h2>
+          <p class="text-sm text-slate-500 mt-0.5">Selecciona el cultivo a supervisar o asociar sensores.</p>
+        </div>
+        <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+          <label for="cultivoSeleccionado" class="text-sm font-semibold text-slate-700">Cultivo seleccionado:</label>
+          <select id="cultivoSeleccionado" x-model.number="cultivoFiltroId" @change="cancelarEdicion()" class="border border-slate-400 bg-white px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+            <template x-for="c in cultivosDisponibles" :key="c.id">
+              <option :value="c.id" x-text="c.nombre"></option>
+            </template>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <div x-show="cargando" class="p-6 text-center text-emerald-700 font-semibold animate-pulse">Cargando datos...</div>
+    <div x-show="error && !cargando" x-cloak class="p-6 bg-red-50 text-red-700 text-center">
+        <p x-text="error"></p>
+        <button @click="cargarDatos()" class="mt-2 text-sm underline font-bold cursor-pointer">Reintentar</button>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6" x-show="!cargando && !error" x-cloak>
+      <div class="lg:col-span-1 space-y-6">
+        <section class="bg-white p-5 border border-slate-500">
+          <div class="mb-4">
+            <h3 class="text-xl font-bold text-slate-900" x-text="editandoId ? 'Editar Sensor' : 'Agregar Sensor'"></h3>
+          </div>
+
+          <form @submit.prevent="guardarSensor" class="space-y-4" novalidate>
+            <div>
+              <label for="identificadorSensor" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">Identificador</label>
+              <input id="identificadorSensor" type="text" x-model.trim="formSensor.nombre" placeholder="Ej: Sensor Temp-01" class="w-full border border-slate-400 px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+              <span x-show="errores.nombre" x-text="errores.nombre" x-cloak class="text-xs text-red-600 mt-1 block font-medium"></span>
+            </div>
+            <div>
+              <label for="tipoMedicionSensor" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">Tipo de Medición</label>
+              <input id="tipoMedicionSensor" type="text" x-model.trim="formSensor.tipo" placeholder="Ej: Temperatura" class="w-full border border-slate-400 px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+              <span x-show="errores.tipo" x-text="errores.tipo" x-cloak class="text-xs text-red-600 mt-1 block font-medium"></span>
+            </div>
+            <div>
+              <label for="estadoSensor" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">Estado</label>
+              <select id="estadoSensor" x-model="formSensor.estado" class="w-full border border-slate-400  bg-white px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                <option value="Activo">Activo</option>
+                <option value="Desconectado">Desconectado</option>
+                <option value="Alerta">Alerta</option>
+                <option value="Mantenimiento">Mantenimiento</option>
+              </select>
+            </div>
+            <div class="flex gap-2 pt-2">
+              <button type="submit" :disabled="enviando"
+                      class="flex-1 bg-emerald-800 hover:bg-emerald-700 active:scale-[0.99] text-white font-medium py-2.5 px-4  text-sm transition disabled:opacity-50 cursor-pointer shadow-sm">
+                <span x-text="enviando ? 'Guardando...' : (editandoId ? 'Guardar Cambios' : '+ Registrar Sensor')"></span>
+              </button>
+
+              <button type="button" x-show="editandoId" @click="cancelarEdicion()" x-cloak
+                      class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-medium py-2.5 px-4  text-sm transition cursor-pointer">
+                Cancelar
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <section class="bg-white border border-slate-500 shadow-sm overflow-hidden" x-data="{ acordeonAbierto: null }">
+          <div class="px-5 py-3.5 bg-slate-50 border-b border-slate-200 flex items-center gap-2">
+            <svg class="w-4 h-4 text-emerald-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <h4 class="text-sm font-bold text-slate-800">Guía de Estados</h4>
+          </div>
+          <div class="divide-y divide-slate-200">
+            <div>
+              <button type="button"
+                      @click="acordeonAbierto = acordeonAbierto === 1 ? null : 1"
+                      class="w-full px-5 py-3 text-left text-sm font-medium text-slate-700 hover:bg-slate-50 flex items-center justify-between transition cursor-pointer">
+                <span>1. Significado de los estados</span>
+                <svg class="w-4 h-4 text-slate-400 transition-transform duration-200"
+                     :class="acordeonAbierto === 1 ? 'rotate-180 text-emerald-700' : ''"
+                     fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              <div x-show="acordeonAbierto === 1" x-cloak class="px-5 pb-3.5 text-xs text-slate-600 space-y-1.5 leading-relaxed">
+                <p><strong class="text-emerald-700">Activo:</strong> Transmitiendo lecturas en tiempo real.</p>
+                <p><strong class="text-amber-700">Alerta:</strong> Valores fuera del rango óptimo del cultivo.</p>
+                <p><strong class="text-blue-700">Mantenimiento:</strong> En revisión o calibración técnica.</p>
+                <p><strong class="text-slate-700">Desconectado:</strong> Sin señal o apagado temporalmente.</p>
+              </div>
+            </div>
+            <div>
+              <button type="button"
+                      @click="acordeonAbierto = acordeonAbierto === 2 ? null : 2"
+                      class="w-full px-5 py-3 text-left text-sm font-semibold text-slate-800 hover:bg-slate-50 flex items-center justify-between transition cursor-pointer">
+                <span>2. Recomendación al registrar</span>
+                <svg class="w-4 h-4 text-slate-500 transition-transform duration-200 shrink-0"
+                     :class="acordeonAbierto === 2 ? 'rotate-180 text-emerald-800' : ''"
+                     fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              <div x-show="acordeonAbierto === 2" x-cloak class="px-5 pb-4 pt-1 text-xs text-slate-600 space-y-1.5 leading-relaxed bg-slate-50/40">
+                <p>Usa nombres identificables por sector (ej. <em>Sensor pH-01</em>).</p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <section class="bg-white border border-slate-500 overflow-hidden lg:col-span-2">
+        <div class="p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-slate-100">
+          <div>
+            <h3 class="text-2xl font-bold text-slate-900">Sensores del Cultivo</h3>
+            <p class="text-xs text-slate-500 mt-0.5">Condiciones actuales</p>
+          </div>
+          <span class="inline-flex items-center self-start sm:self-auto px-3 py-1 text-xs font-bold text-emerald-800 bg-emerald-50 rounded-full border border-emerald-200" x-text="sensoresFiltrados.length + ' sensor(es)'"></span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm text-slate-600">
+            <thead class="bg-slate-50 text-xs uppercase font-bold text-slate-500 border-b border-slate-200">
+              <tr>
+                <th class="px-6 py-3.5">Sensor</th>
+                <th class="px-6 py-3.5">Tipo</th>
+                <th class="px-6 py-3.5 text-center">Estado</th>
+                <th class="px-6 py-3.5 text-right">Acciones</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <template x-for="sensor in sensoresFiltrados" :key="sensor.id">
+                <tr class="hover:bg-slate-50/80 transition">
+                    <td class="px-6 py-3.5 font-medium text-slate-900" x-text="sensor.nombre"></td>
+                    <td class="px-6 py-3.5" x-text="sensor.tipo"></td>
+                    <td class="px-6 py-3.5 text-center" x-text="sensor.estado"></td>
+                    <td class="px-6 py-3.5 text-right">
+                      <button type="button" @click="prepararEdicion(sensor)" class="text-xs text-amber-700 hover:text-amber-900 font-semibold cursor-pointer">Editar</button>
+                      <button type="button" @click="abrirModal(sensor)" class="text-xs text-red-600 hover:text-red-800 font-semibold cursor-pointer">Eliminar</button>
+                    </td>
+                </tr>
+              </template>
+              <tr x-show="sensoresFiltrados.length === 0">
+                  <td colspan="4" class="px-6 py-8 text-center text-slate-400 italic">No hay sensores registrados para este cultivo.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+    <div x-show="modalAbierto"
+         x-cloak
+         @click.self="modalAbierto = false"
+         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs"
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-150"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0">
+      <div class="bg-white border border-slate-500 shadow-xl max-w-sm w-full p-6 space-y-4"
+           x-transition:enter="transition ease-out duration-200"
+           x-transition:enter-start="opacity-0 scale-95"
+           x-transition:enter-end="opacity-100 scale-100"
+           x-transition:leave="transition ease-in duration-150"
+           x-transition:leave-start="opacity-100 scale-100"
+           x-transition:leave-end="opacity-0 scale-95">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-red-100 text-red-700 border border-red-200 flex items-center justify-center shrink-0">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-slate-900">Eliminar sensor</h3>
+            <p class="text-xs text-slate-500">Esta acción desvinculará el dispositivo del cultivo.</p>
+          </div>
+        </div>
+
+        <p class="text-sm text-slate-600 leading-relaxed">
+          ¿Estás seguro de que deseas eliminar el sensor
+          <strong class="text-slate-900" x-text="sensorAEliminar?.nombre"></strong>
+          <span x-show="sensorAEliminar?.tipo" class="text-slate-500">(<span x-text="sensorAEliminar?.tipo"></span>)</span>?
+        </p>
+
+        <div class="flex justify-end gap-2.5 pt-2">
+          <button type="button"
+                  @click="modalAbierto = false"
+                  class="px-4 py-2 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-300 transition cursor-pointer">
+            Cancelar
+          </button>
+          <button type="button"
+                  @click="confirmarEliminar()"
+                  class="px-4 py-2 text-xs font-semibold text-white bg-red-700 hover:bg-red-800 transition cursor-pointer">
+            Eliminar
+          </button>
+        </div>
+      </div>
+    </div>
+    <div x-show="toast.visible"
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0 translate-y-3"
+         x-transition:enter-end="opacity-100 translate-y-0"
+         x-transition:leave="transition ease-in duration-150"
+         x-transition:leave-start="opacity-100 translate-y-0"
+         x-transition:leave-end="opacity-0 translate-y-3"
+         x-cloak
+         :class="{
+           'bg-emerald-800 text-white': toast.tipo === 'success',
+           'bg-amber-600 text-white': toast.tipo === 'info',
+           'bg-red-700 text-white': toast.tipo === 'error'
+         }"
+         class="fixed bottom-5 right-5 px-4 py-3 rounded-xl shadow-lg text-sm font-medium z-50 flex items-center gap-2.5">
+      <svg x-show="toast.tipo === 'success'" class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+      </svg>
+      <svg x-show="toast.tipo === 'info'" class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+      </svg>
+      <svg x-show="toast.tipo === 'error'" class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <span x-text="toast.mensaje"></span>
+    </div>
+  </main>
+  <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
+        CultivaWeb — Sistema de Monitoreo de Invernadero
+  </footer>
+  <script type="module">
+    import { api } from './js/api.js';
+    import { protegerRuta, configurarCerrarSesion } from './js/guardia.js';
+    
+    protegerRuta(); 
+    configurarCerrarSesion(); 
+    window.api = api;
+  </script>
+</body>
+</html>

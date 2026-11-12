@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cultivos</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>[x-cloak] { display: none !important; }</style>
+</head>
+<body class="bg-white text-slate-800 font-sans antialiased min-h-screen flex flex-col">
+    
+  <header class="bg-emerald-900 text-white shadow-md sticky top-0 z-50" x-data="{ menuAbierto: false }">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <h1 class="text-2xl font-bold tracking-wide text-white leading-none">CultivaWeb</h1>
+        <nav class="hidden md:flex items-center gap-2">
+          <a href="panel.html" class="px-3.5 py-2 text-sm font-medium text-emerald-100 hover:bg-emerald-800/60 hover:text-white transition">Panel principal</a>
+          <a href="cultivos.html" class="px-3.5 py-2 text-sm font-semibold bg-emerald-800 text-white shadow-inner">Cultivos</a>
+          <a href="sensores.html" class="px-3.5 py-2 text-sm font-medium text-emerald-100 hover:bg-emerald-800/60 hover:text-white transition">Sensores</a>
+          <a href="index.html" class="px-3.5 py-2 text-sm font-medium text-red-200 hover:bg-red-900/40 hover:text-white transition">Cerrar Sesión</a>
+        </nav>
+        <div class="flex md:hidden">
+          <button @click="menuAbierto = !menuAbierto" type="button" class="p-2 rounded-xl text-emerald-200 hover:text-white hover:bg-emerald-800 ml-auto">
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+          </button>
+        </div>
+      </div>
+      <nav x-show="menuAbierto" x-cloak class="md:hidden py-3 border-t border-emerald-800 flex flex-col items-end space-y-1">
+        <a href="panel.html" class="w-full text-right px-4 py-2 text-sm font-semibold text-emerald-100 hover:bg-emerald-800">Inicio</a>
+        <a href="cultivos.html" class="w-full text-right px-4 py-2 text-sm font-bold bg-emerald-800 text-white">Cultivos</a>
+        <a href="sensores.html" class="w-full text-right px-4 py-2 text-sm font-semibold text-emerald-100 hover:bg-emerald-800">Sensores</a>
+        <a href="index.html" class="w-full text-right px-4 py-2 text-sm font-semibold text-red-300 hover:bg-red-900/50">Cerrar Sesión</a>
+      </nav>
+      </div>
+    </header>
+    <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6" x-data="{
+    cultivo: null,
+    sensoresAsociados: [],
+    cargando: true,
+    error: null,
+    noEncontrado: false,
+
+    async init() {
+      setTimeout(async () => {
+        await this.cargarDetalle();
+      }, 100);
+    },
+
+    async cargarDetalle() {
+      this.cargando = true;
+      this.error = null;
+      this.noEncontrado = false;
+
+      const params = new URLSearchParams(window.location.search);
+      const id = Number(params.get('id'));
+
+      if (!id) {
+        this.noEncontrado = true;
+        this.cargando = false;
+        return;
+      }
+
+      try {
+        const [resCultivos, resSensores] = await Promise.all([
+          window.api.cultivos.listar(),
+          window.api.sensores.listar()
+        ]);
+
+        if (!resCultivos.ok || !resSensores.ok) {
+          this.error = resCultivos.error || resSensores.error || 'No se pudo cargar la información del cultivo.';
+          this.cargando = false;
+          return;
+        }
+
+        const encontrado = resCultivos.data.find(c => Number(c.id) === id);
+        if (!encontrado) {
+          this.noEncontrado = true;
+          this.cargando = false;
+          return;
+        }
+
+        this.cultivo = encontrado;
+        this.sensoresAsociados = resSensores.data.filter(s => Number(s.cultivoId) === id);
+      } catch (e) {
+        this.error = 'Error de conexión con el servidor.';
+      }
+
+      this.cargando = false;
+    }
+  }" x-init="init()">
+        <div class="flex items-center justify-between">
+            <a href="cultivos.html" class="inline-flex items-center gap-2 text-sm font-semibold text-emerald-800 hover:text-emerald-950 transition">
+                <span>←</span>
+                <span>Volver al listado de cultivos</span>
+            </a>
+        </div>
+        <div x-show="cargando" class="bg-white p-10 border border-slate-400 text-center text-emerald-700 font-semibold animate-pulse">
+            Cargando detalle del cultivo...
+        </div>
+
+        <div x-show="error && !cargando" x-cloak class="bg-red-50 border border-red-300 p-8 text-center text-red-700 space-y-3">
+            <p class="font-semibold" x-text="error"></p>
+            <button type="button" @click="cargarDetalle()" class="px-4 py-2 text-xs font-bold bg-red-700 text-white hover:bg-red-800 transition cursor-pointer">
+                Reintentar
+            </button>
+        </div>
+        <div x-show="noEncontrado && !cargando && !error" x-cloak class="bg-white border border-slate-400 p-10 text-center space-y-4">
+            <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Error 404</p>
+            <h2 class="text-2xl font-bold text-slate-900">Cultivo no encontrado</h2>
+            <p class="text-sm text-slate-600 max-w-md mx-auto">
+                El cultivo solicitado no existe o fue eliminado del sistema.
+            </p>
+            <div class="pt-2">
+                <a href="cultivos.html" class="inline-block bg-emerald-800 hover:bg-emerald-700 text-white text-sm font-semibold px-5 py-2.5 transition">
+                    Ir a Gestión de Cultivos
+                </a>
+            </div>
+        </div>
+        <div x-show="cultivo && !cargando && !error && !noEncontrado" x-cloak class="space-y-6">
+            <section class="bg-white border border-slate-500 p-6 sm:p-8 shadow-xs">
+                <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 border-b border-slate-200 pb-6">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-emerald-700" x-text="'Cultivo #' + cultivo?.id"></span>
+                        <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 mt-1" x-text="cultivo?.nombre"></h2>
+                        <p class="text-sm text-slate-500 mt-1" x-text="'Variedad / Tipo: ' + (cultivo?.tipo || 'Sin especificar')"></p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="px-3.5 py-1.5 text-xs font-bold border"
+                            :class="{
+                                'bg-emerald-50 text-emerald-800 border-emerald-300': cultivo?.estado === 'Listo para cosecha',
+                                'bg-blue-50 text-blue-800 border-blue-300': cultivo?.estado === 'En crecimiento',
+                                'bg-slate-100 text-slate-700 border-slate-300': cultivo?.estado === 'Cosechado'
+                            }"
+                            x-text="cultivo?.estado"></span>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6">
+                    <div class="bg-slate-50 border border-slate-300 p-4">
+                        <p class="text-xs font-bold uppercase text-slate-500">Total Sensores</p>
+                        <p class="text-2xl font-bold text-slate-900 mt-1" x-text="sensoresAsociados.length">0</p>
+                    </div>
+                    <div class="bg-slate-50 border border-slate-300 p-4">
+                        <p class="text-xs font-bold uppercase text-slate-500">Sensores Activos</p>
+                        <p class="text-2xl font-bold text-emerald-700 mt-1" x-text="sensoresAsociados.filter(s => s.estado === 'Activo').length">0</p>
+                    </div>
+                    <div class="bg-slate-50 border border-slate-300 p-4">
+                        <p class="text-xs font-bold uppercase text-slate-500">Sensores en Alerta</p>
+                        <p class="text-2xl font-bold text-red-600 mt-1" x-text="sensoresAsociados.filter(s => s.estado === 'Alerta').length">0</p>
+                    </div>
+                </div>
+            </section>
+            <section class="bg-white border border-slate-500 overflow-hidden">
+                <div class="p-6 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-900">Sensores Vinculados</h3>
+                        <p class="text-xs text-slate-500 mt-0.5">Dispositivos asignados a la supervisión de este cultivo.</p>
+                        <a href="sensores.html" class="inline-flex items-center justify-center bg-emerald-800 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2.5 transition">
+                            + Gestionar sensores
+                        </a>
+                    </div>
+                </div>       
+                    <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-slate-600">
+                        <thead class="bg-slate-50 text-xs uppercase font-bold text-slate-500 border-b border-slate-200">
+                        <tr>
+                            <th class="px-6 py-3.5">Identificador</th>
+                            <th class="px-6 py-3.5">Tipo de Medición</th>
+                            <th class="px-6 py-3.5 text-center">Estado</th>
+                        </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                        <template x-for="sensor in sensoresAsociados" :key="sensor.id">
+                            <tr class="hover:bg-slate-50/80 transition">
+                            <td class="px-6 py-3.5 font-medium text-slate-900" x-text="sensor.nombre"></td>
+                            <td class="px-6 py-3.5" x-text="sensor.tipo"></td>
+                            <td class="px-6 py-3.5 text-center">
+                                <span class="px-2.5 py-1 text-xs font-bold rounded-full"
+                                    :class="{
+                                        'bg-emerald-100 text-emerald-800': sensor.estado === 'Activo',
+                                        'bg-amber-100 text-amber-800': sensor.estado === 'Alerta',
+                                        'bg-blue-100 text-blue-800': sensor.estado === 'Mantenimiento',
+                                        'bg-slate-200 text-slate-700': sensor.estado === 'Desconectado'
+                                    }"
+                                    x-text="sensor.estado"></span>
+                            </td>
+                            </tr>
+                        </template>
+                        <tr x-show="sensoresAsociados.length === 0">
+                            <td colspan="3" class="px-6 py-8 text-center text-slate-400 italic">
+                            Este cultivo aún no tiene sensores asociados.
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    </div>
+            </section>
+        </div>
+
+    </main>
+
+    <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
+        CultivaWeb — Sistema de Monitoreo de Invernadero
+    </footer>
+
+  <script type="module">
+    import { api } from './js/api.js';
+    import { protegerRuta, configurarCerrarSesion } from './js/guardia.js';
+    
+    protegerRuta();
+    configurarCerrarSesion();
+    window.api = api;
+  </script>
+</body>
+</html>

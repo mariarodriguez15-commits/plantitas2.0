@@ -1,5 +1,5 @@
 const PREFIJO = 'cw:db:';
-export const RECURSOS = ['usuarios']; 
+export const RECURSOS = ['usuarios', 'cultivos', 'sensores']; 
 
 let siembra = null;
 

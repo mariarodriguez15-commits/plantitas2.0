@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel principal - CultivaWeb</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+<body class="min-h-screen bg-slate-50 text-slate-800 flex flex-col">
+    
+  <header class="bg-emerald-900 text-white shadow-md sticky top-0 z-50" x-data="{ menuAbierto: false }">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <h1 class="text-2xl font-bold tracking-wide text-white leading-none">CultivaWeb</h1>
+        <nav class="hidden md:flex items-center gap-2">
+          <a href="panel.html" class="px-3.5 py-2 text-sm font-semibold bg-emerald-800 text-white shadow-inner">Panel principal</a>
+          <a href="cultivos.html" class="px-3.5 py-2 text-sm font-medium text-emerald-100 hover:bg-emerald-800/60 hover:text-white transition">Cultivos</a>
+          <a href="sensores.html" class="px-3.5 py-2 text-sm font-medium text-emerald-100 hover:bg-emerald-800/60 hover:text-white transition">Sensores</a>
+          <a href="index.html" class="px-3.5 py-2 text-sm font-medium text-red-200 hover:bg-red-900/40 hover:text-white transition">Cerrar Sesión</a>
+        </nav>
+        <div class="flex md:hidden">
+          <button @click="menuAbierto = !menuAbierto" type="button" class="p-2 rounded-xl text-emerald-200 hover:text-white hover:bg-emerald-800 ml-auto">
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+          </button>
+        </div>
+      </div>
+      <nav x-show="menuAbierto" x-cloak class="md:hidden py-3 border-t border-emerald-800 flex flex-col items-end space-y-1">
+        <a href="panel.html" class="w-full text-right px-4 py-2 text-sm font-bold bg-emerald-800 text-white">Inicio</a>
+        <a href="cultivos.html" class="w-full text-right px-4 py-2 text-sm font-semibold text-emerald-100 hover:bg-emerald-800">Cultivos</a>
+        <a href="sensores.html" class="w-full text-right px-4 py-2 text-sm font-semibold text-emerald-100 hover:bg-emerald-800">Sensores</a>
+        <a href="index.html" class="w-full text-right px-4 py-2 text-sm font-semibold text-red-300 hover:bg-red-900/50">Cerrar Sesión</a>
+      </nav>
+    </div>
+  </header>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8" x-data="{
+      cultivos: [],
+      sensores: [],
+      async init() {
+        try {
+          if (!window.api) {
+             console.error('API no cargada todavía');
+             return;
+          }
+          const [resCultivos, resSensores] = await Promise.all([
+            window.api.cultivos.listar(),
+            window.api.sensores.listar()
+          ]);
+          if (resCultivos.ok) this.cultivos = resCultivos.data;
+          if (resSensores.ok) this.sensores = resSensores.data;
+        } catch (e) {
+          console.error('Error cargando datos:', e);
+        }
+      }
+    }" x-init="setTimeout(() => init(), 100)">
+      
+      <section class="bg-emerald-900 text-white p-6 sm:p-8 shadow-lg">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h2 class="text-2xl sm:text-3xl font-bold">Panel de Control</h2>
+            <p class="text-sm sm:text-base text-emerald-200 mt-1">Visualiza el estado de tus cultivos y sensores.</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <a href="cultivos.html" class="bg-white rounded-xl text-emerald-900 px-4 py-2.5 text-sm font-bold">Gestionar cultivos ❀</a>
+            <a href="sensores.html" class="bg-white rounded-xl text-emerald-900 px-4 py-2.5 text-sm font-bold">Gestionar sensores ☀︎</a>
+          </div>
+        </div>
+      </section>
+
+      <div x-show="cargando" class="p-8 bg-white border border-slate-300 text-center text-emerald-800 font-semibold animate-pulse">
+        Cargando resumen del sistema...
+      </div>
+      <div x-show="error && !cargando" x-cloak class="p-6 bg-red-50 border border-red-300 text-red-700 text-center space-y-2">
+        <p class="font-medium" x-text="error"></p>
+        <button type="button" @click="cargarPanel()" class="px-4 py-1.5 bg-red-700 text-white text-xs font-bold rounded hover:bg-red-800 transition cursor-pointer">
+          Reintentar
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <section class="bg-white p-6 border border-slate-400">
+            <h3 class="text-xl font-bold mb-4">Cultivos</h3>
+            <div class="grid grid-cols-2 gap-4 mb-4">
+              <div class="bg-slate-50 p-4 border text-center">
+                <p class="text-xs font-bold uppercase text-slate-500">Total Cultivos</p>
+                <p class="text-3xl font-bold text-emerald-800 mt-1" x-text="cultivos.length">0</p>
+              </div>
+              <div class="bg-slate-50 p-4 border text-center">
+                <p class="text-xs font-bold uppercase text-slate-500">Por Cosechar</p>
+                <p class="text-3xl font-bold text-emerald-800 mt-1" x-text="cultivos.filter(c => c.estado === 'Listo para cosecha').length">0</p>
+              </div>
+            </div>
+            <h4 class="text-xs font-bold uppercase text-slate-400 mb-2">Últimos registrados</h4>
+            <p x-show="cultivos.length === 0" class="p-4 text-center text-sm text-slate-400 italic bg-slate-50 border">
+              No hay cultivos registrados todavía.
+            </p>
+            <template x-for="c in cultivos.slice(-2).reverse()" :key="c.id">
+                <div class="flex justify-between p-3.5 bg-slate-50 border mb-2">
+                    <p class="text-sm font-bold" x-text="c.nombre"></p>
+                    <span class="text-xs font-bold text-blue-700" x-text="c.estado"></span>
+                </div>
+            </template>
+        </section>
+
+        <section class="bg-white p-6 border border-slate-400">
+            <h3 class="text-xl font-bold mb-4">Sensores</h3>
+            <div class="grid grid-cols-2 gap-4 mb-4">
+              <div class="bg-slate-50 p-4 border text-center">
+                <p class="text-xs font-bold uppercase text-slate-500">Operativos</p>
+                <p class="text-3xl font-bold text-emerald-700 mt-1" x-text="sensores.filter(s => s.estado === 'Activo').length">0</p>
+              </div>
+              <div class="bg-slate-50 p-4 border text-center">
+                <p class="text-xs font-bold uppercase text-slate-500">En Alerta</p>
+                <p class="text-3xl font-bold text-red-600 mt-1" x-text="sensores.filter(s => s.estado === 'Alerta').length">0</p>
+              </div>
+            </div>
+            <h4 class="text-xs font-bold uppercase text-slate-400 mb-2">Estado de sensores</h4>
+            <p x-show="sensores.length === 0" class="p-4 text-center text-sm text-slate-400 italic bg-slate-50 border">
+              No hay sensores asociados todavía.
+            </p>
+            <template x-for="s in sensores.slice(-2).reverse()" :key="s.id">
+                <div class="flex justify-between p-3.5 bg-slate-50 border mb-2">
+                    <div>
+                        <p class="text-sm font-bold" x-text="s.nombre"></p>
+                        <p class="text-xs text-slate-500" x-text="s.tipo"></p>
+                    </div>
+                    <span class="text-xs font-bold text-emerald-600" x-text="s.estado"></span>
+                </div>
+            </template>
+        </section>
+      </div>
+    </main>
+    <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
+        CultivaWeb — Sistema de Monitoreo de Invernadero
+    </footer>
+    <script type="module">
+      import { api } from './js/api.js';
+      import { protegerRuta, configurarCerrarSesion } from './js/guardia.js';
+      
+      protegerRuta();
+      configurarCerrarSesion();
+      window.api = api;
+    </script>
+</body>
+</html>
