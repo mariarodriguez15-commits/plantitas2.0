@@ -67,6 +67,16 @@
         </div>
       </section>
 
+      <div x-show="cargando" class="p-8 bg-white border border-slate-300 text-center text-emerald-800 font-semibold animate-pulse">
+        Cargando resumen del sistema...
+      </div>
+      <div x-show="error && !cargando" x-cloak class="p-6 bg-red-50 border border-red-300 text-red-700 text-center space-y-2">
+        <p class="font-medium" x-text="error"></p>
+        <button type="button" @click="cargarPanel()" class="px-4 py-1.5 bg-red-700 text-white text-xs font-bold rounded hover:bg-red-800 transition cursor-pointer">
+          Reintentar
+        </button>
+      </div>
+
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <section class="bg-white p-6 border border-slate-400">
             <h3 class="text-xl font-bold mb-4">Cultivos</h3>
@@ -81,6 +91,9 @@
               </div>
             </div>
             <h4 class="text-xs font-bold uppercase text-slate-400 mb-2">Últimos registrados</h4>
+            <p x-show="cultivos.length === 0" class="p-4 text-center text-sm text-slate-400 italic bg-slate-50 border">
+              No hay cultivos registrados todavía.
+            </p>
             <template x-for="c in cultivos.slice(-2).reverse()" :key="c.id">
                 <div class="flex justify-between p-3.5 bg-slate-50 border mb-2">
                     <p class="text-sm font-bold" x-text="c.nombre"></p>
@@ -102,6 +115,9 @@
               </div>
             </div>
             <h4 class="text-xs font-bold uppercase text-slate-400 mb-2">Estado de sensores</h4>
+            <p x-show="sensores.length === 0" class="p-4 text-center text-sm text-slate-400 italic bg-slate-50 border">
+              No hay sensores asociados todavía.
+            </p>
             <template x-for="s in sensores.slice(-2).reverse()" :key="s.id">
                 <div class="flex justify-between p-3.5 bg-slate-50 border mb-2">
                     <div>
