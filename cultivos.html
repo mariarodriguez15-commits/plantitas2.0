@@ -202,7 +202,7 @@
       this.cultivoAEliminar = id; 
       this.modalAbierto = true; 
     },
-    
+
     async confirmarEliminar() {
       try {
         const res = await window.api.cultivos.eliminar(this.cultivoAEliminar);
@@ -396,6 +396,10 @@
          class="fixed bottom-5 right-5 px-4 py-3 rounded-xl shadow-lg text-sm font-medium z-50 flex items-center gap-2.5">
       <span x-text="toast.mensaje"></span>
     </div>
+
+    <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
+      CultivaWeb — Sistema de Monitoreo de Invernadero
+    </footer>
 
   </main>
 
