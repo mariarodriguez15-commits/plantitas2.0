@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cultivos</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>[x-cloak] { display: none !important; }</style>
+</head>
+<body class="bg-white text-slate-800 font-sans antialiased min-h-screen flex flex-col">
+    
+  <header class="bg-emerald-900 text-white shadow-md sticky top-0 z-50" x-data="{ menuAbierto: false }">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <h1 class="text-2xl font-bold tracking-wide text-white leading-none">CultivaWeb</h1>
+        <nav class="hidden md:flex items-center gap-2">
+          <a href="panel.html" class="px-3.5 py-2 text-sm font-medium text-emerald-100 hover:bg-emerald-800/60 hover:text-white transition">Panel principal</a>
+          <a href="cultivos.html" class="px-3.5 py-2 text-sm font-semibold bg-emerald-800 text-white shadow-inner">Cultivos</a>
+          <a href="sensores.html" class="px-3.5 py-2 text-sm font-medium text-emerald-100 hover:bg-emerald-800/60 hover:text-white transition">Sensores</a>
+          <a href="index.html" class="px-3.5 py-2 text-sm font-medium text-red-200 hover:bg-red-900/40 hover:text-white transition">Cerrar Sesión</a>
+        </nav>
+        <div class="flex md:hidden">
+          <button @click="menuAbierto = !menuAbierto" type="button" class="p-2 rounded-xl text-emerald-200 hover:text-white hover:bg-emerald-800 ml-auto">
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+          </button>
+        </div>
+      </div>
+      <nav x-show="menuAbierto" x-cloak class="md:hidden py-3 border-t border-emerald-800 flex flex-col items-end space-y-1">
+        <a href="panel.html" class="w-full text-right px-4 py-2 text-sm font-semibold text-emerald-100 hover:bg-emerald-800">Inicio</a>
+        <a href="cultivos.html" class="w-full text-right px-4 py-2 text-sm font-bold bg-emerald-800 text-white">Cultivos</a>
+        <a href="sensores.html" class="w-full text-right px-4 py-2 text-sm font-semibold text-emerald-100 hover:bg-emerald-800">Sensores</a>
+        <a href="index.html" class="w-full text-right px-4 py-2 text-sm font-semibold text-red-300 hover:bg-red-900/50">Cerrar Sesión</a>
+      </nav>
+      </div>
+    </header>
+</body>
+</html>
