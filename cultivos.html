@@ -64,6 +64,57 @@
       </nav>
   </header>
 
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+    <section class="bg-white p-6 border border-slate-500 shadow-xs">
+      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <div>
+          <h2 class="text-xl font-bold text-slate-900">Gestión de Cultivos</h2>
+          <p class="text-sm text-slate-500 mt-0.5">Busca por nombre o filtra por estado y tipo de cultivo.</p>
+        </div>
+
+        <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+          <div class="relative">
+            <label for="busquedaCultivo" class="sr-only">Buscar por nombre</label>
+            <input type="text" id="busquedaCultivo" x-model.trim="busqueda" placeholder="Buscar cultivo..."
+                   class="w-full sm:w-56 border border-slate-400 bg-white px-3.5 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
+          </div>
+
+          <div>
+            <label for="filtroEstado" class="sr-only">Filtrar por estado</label>
+            <select id="filtroEstado" x-model="filtroEstado"
+                    class="w-full sm:w-auto border border-slate-400 bg-white px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
+              <option value="Todos">Todos los estados</option>
+              <option value="Activo">Activo</option>
+              <option value="En crecimiento">En crecimiento</option>
+              <option value="Cosechado">Cosechado</option>
+              <option value="En alerta">En alerta</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="filtroTipo" class="sr-only">Filtrar por tipo</label>
+            <select id="filtroTipo" x-model="filtroTipo"
+                    class="w-full sm:w-auto border border-slate-400 bg-white px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
+              <option value="Todos">Todos los tipos</option>
+              <template x-for="tipo in tiposDisponibles" :key="tipo">
+                <option :value="tipo" x-text="tipo"></option>
+              </template>
+            </select>
+          </div>
+
+          <button type="button" 
+                  x-show="busqueda !== '' || filtroEstado !== 'Todos' || filtroTipo !== 'Todos'"
+                  @click="limpiarFiltros()"
+                  x-cloak
+                  class="px-3.5 py-2 text-xs font-semibold text-slate-600 hover:text-slate-900 border border-slate-300 hover:bg-slate-100 transition cursor-pointer">
+            Limpiar
+          </button>
+        </div>
+      </div>
+    </section>
+
+    
+</main>
     <div x-data="{nombreCultivo:'', tipoCultivo:'', cultivo: [],
     init(){
         const guardados = localStorage.getItem('misCultivos');
