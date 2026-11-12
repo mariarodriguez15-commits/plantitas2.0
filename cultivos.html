@@ -87,6 +87,7 @@
             <select id="filtroEstado" x-model="filtroEstado"
                     class="w-full sm:w-auto border border-slate-400 bg-white px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
               <option value="Todos">Todos los estados</option>
+              <option value="Cosechado">Listo para cosecha</option>
               <option value="En crecimiento">En crecimiento</option>
               <option value="Cosechado">Cosechado</option>
               
@@ -151,6 +152,7 @@
                     class="w-full border border-slate-400 bg-white px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
               <option value="En crecimiento">En crecimiento</option>
               <option value="Cosechado">Cosechado</option>
+              <option value="Cosechado">Listo para cosecha</option>
             </select>
           </div>
 
@@ -197,10 +199,9 @@
                   <td class="px-6 py-3.5 text-center">
                     <span class="inline-flex px-2.5 py-0.5 text-xs font-semibold rounded-xl border"
                           :class="{
-                            'bg-emerald-50 text-emerald-700 border-emerald-200': c.estado === 'Activo',
+                            'bg-emerald-50 text-emerald-700 border-emerald-200': c.estado === 'Listo para cosecha',
                             'bg-blue-50 text-blue-700 border-blue-200': c.estado === 'En crecimiento',
-                            'bg-slate-100 text-slate-600 border-slate-200': c.estado === 'Cosechado',
-                            'bg-red-50 text-red-700 border-red-200': c.estado === 'En alerta'
+                            'bg-slate-100 text-slate-600 border-slate-200': c.estado === 'Cosechado'
                           }"
                           x-text="c.estado">
                     </span>
@@ -282,8 +283,8 @@
           }
 
           this.cultivos = [
-            { id: 101, nombre: 'Cultivo de Maíz', tipo: 'Maíz', estado: 'Activo' },
-            { id: 102, nombre: 'Cultivo de Ají', tipo: 'Ají', estado: 'En crecimiento' },
+            { id: 101, nombre: 'Cultivo de Maíz', tipo: 'Maíz', estado: 'En crecimientoivo' },
+            { id: 102, nombre: 'Cultivo de Ají', tipo: 'Ají', estado: 'Listo para cosecha' },
           ];
           this.guardarEnStorage();
         },
