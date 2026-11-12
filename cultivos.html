@@ -81,6 +81,18 @@
     formCultivo: { nombre: '', tipo: '', estado: 'En crecimiento' },
     paginaActual: 1,
     itemsPorPagina: 5,
+    errores: { nombre: '', tipo: '' },
+    toast: { visible: false, mensaje: '', tipo: 'success', timer: null },
+
+    mostrarToast(mensaje, tipo = 'success') {
+      if (this.toast.timer) clearTimeout(this.toast.timer);
+      this.toast.mensaje = mensaje;
+      this.toast.tipo = tipo;
+      this.toast.visible = true;
+      this.toast.timer = setTimeout(() => {
+        this.toast.visible = false;
+      }, 3200);
+    },
 
     async init() { 
       setTimeout(async () => {
@@ -89,15 +101,15 @@
     },
     
     get tiposDisponibles() {
-      const tipos = this.cultivos.map(c => c.tipo.trim()).filter(Boolean);
+      const tipos = this.cultivos.map(c => (c.tipo || '').trim()).filter(Boolean);
       return [...new Set(tipos)];
     },
 
     get cultivosFiltrados() {
       return this.cultivos.filter(c => {
-        const coincideNombre = c.nombre.toLowerCase().includes(this.busqueda.toLowerCase());
+        const coincideNombre = (c.nombre || '').toLowerCase().includes(this.busqueda.toLowerCase());
         const coincideEstado = this.filtroEstado === 'Todos' || c.estado === this.filtroEstado;
-        const coincideTipo = this.filtroTipo === 'Todos' || c.tipo.toLowerCase() === this.filtroTipo.toLowerCase();
+        const coincideTipo = this.filtroTipo === 'Todos' || (c.tipo || '').toLowerCase() === this.filtroTipo.toLowerCase();
         return coincideNombre && coincideEstado && coincideTipo;
       });
     },
@@ -139,26 +151,41 @@
     },
     
     async guardarCultivo() {
+      this.errores = { nombre: '', tipo: '' };
+      if (!this.formCultivo.nombre) {
+        this.errores.nombre = 'El nombre es obligatorio.';
+        return;
+      }
+      if (!this.formCultivo.tipo) {
+        this.errores.tipo = 'El tipo es obligatorio.';
+        return;
+      }
+
       this.enviando = true;
       try {
-        let res = this.editandoId 
+        const esEdicion = Boolean(this.editandoId);
+        let res = esEdicion 
           ? await window.api.cultivos.actualizar(this.editandoId, this.formCultivo) 
           : await window.api.cultivos.crear(this.formCultivo);
         if (res.ok) { 
           this.cancelarEdicion(); 
-          await this.cargarCultivos(); 
+          await this.cargarCultivos();
+          this.mostrarToast(esEdicion ? 'Cultivo actualizado correctamente.' : 'Cultivo agregado correctamente.');
         } else { alert(res.error || 'Error al guardar'); }
       } catch (e) { alert('Error al guardar.'); }
       this.enviando = false;
     },
     
     prepararEdicion(c) { 
+      this.errores = { nombre: '', tipo: '' };
       this.editandoId = c.id; 
-      this.formCultivo = { nombre: c.nombre, tipo: c.tipo, estado: c.estado }; 
+      this.formCultivo = { nombre: c.nombre, tipo: c.tipo, estado: c.estado };
+      this.mostrarToast(`Editando cultivo: ${c.nombre}`, 'info'); 
     },
     
     cancelarEdicion() { 
       this.editandoId = null; 
+      this.errores = { nombre: '', tipo: '' };
       this.formCultivo = { nombre: '', tipo: '', estado: 'En crecimiento' }; 
     },
     
@@ -171,8 +198,12 @@
       try {
         const res = await window.api.cultivos.eliminar(this.cultivoAEliminar);
         if (res.ok) { 
-          this.modalAbierto = false; 
-          await this.cargarCultivos(); 
+          this.modalAbierto = false;
+          this.cultivoAEliminar = null;
+          await this.cargarCultivos();
+          this.mostrarToast('Cultivo eliminado correctamente.', 'error');
+        } else {
+          alert(res.error || 'Error al eliminar');
         }
       } catch (e) { alert('Error al eliminar.'); }
     }
@@ -188,7 +219,7 @@
         <div class="flex flex-col sm:flex-row sm:items-center gap-3">
           <div class="relative">
             <label for="busquedaCultivo" class="sr-only">Buscar por nombre</label>
-            <input type="text" id="busquedaCultivo" x-model.trim="busqueda" placeholder="Buscar cultivo..." class="w-full sm:w-56 border border-slate-400 bg-white px-3.5 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
+            <input type="text" id="busquedaCultivo" x-model.trim="busqueda" @input="paginaActual = 1" placeholder="Buscar cultivo..." class="w-full sm:w-56 border border-slate-400 bg-white px-3.5 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
           </div>
 
           <div>
@@ -305,12 +336,12 @@
         </div>
         
         <div x-show="cargando" class="p-6 text-center text-emerald-700 font-semibold animate-pulse">Cargando cultivos...</div>
-        <div x-show="error && !cargando" class="p-6 bg-red-50 text-red-700 text-center">
+        <div x-show="error && !cargando" x-cloak class="p-6 bg-red-50 text-red-700 text-center">
             <p x-text="error"></p>
-            <button @click="cargarCultivos()" class="mt-2 text-sm underline font-bold">Reintentar</button>
+            <button @click="cargarCultivos()" class="mt-2 text-sm underline font-bold cursor-pointer">Reintentar</button>
         </div>
 
-        <div class="overflow-x-auto" x-show="!cargando && !error">
+        <div class="overflow-x-auto" x-show="!cargando && !error" x-cloak>
           <table class="w-full text-left text-sm text-slate-600">
             <thead class="bg-slate-50 text-xs uppercase font-bold text-slate-500 border-b">
               <tr>
@@ -327,8 +358,8 @@
                   <td class="px-6 py-3.5" x-text="c.tipo"></td>
                   <td class="px-6 py-3.5 text-center" x-text="c.estado"></td>
                   <td class="px-6 py-3.5 text-right space-x-3">
-                    <button @click="prepararEdicion(c)" class="text-xs text-emerald-700 hover:text-emerald-900 font-semibold">Editar</button>
-                    <button @click="abrirModal(c.id)" class="text-xs text-red-600 hover:text-red-800 font-semibold">Eliminar</button>
+                    <button @click="prepararEdicion(c)" class="text-xs text-emerald-700 hover:text-emerald-900 font-semibold cursor-pointer">Editar</button>
+                    <button @click="abrirModal(c.id)" class="text-xs text-red-600 hover:text-red-800 font-semibold cursor-pointer">Eliminar</button>
                   </td>
                 </tr>
               </template>
@@ -339,7 +370,7 @@
           </table>
         </div>
         
-        <div x-show="cultivosFiltrados.length > 0" class="px-6 py-3.5 bg-slate-50/70 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div x-show="cultivosFiltrados.length > 0" x-cloak class="px-6 py-3.5 bg-slate-50/70 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p class="text-xs text-slate-500">
             Mostrando <span class="font-semibold text-slate-700" x-text="indiceInicio + 1"></span> a <span class="font-semibold text-slate-700" x-text="Math.min(indiceFin, cultivosFiltrados.length)"></span> de <span class="font-semibold text-slate-700" x-text="cultivosFiltrados.length"></span>
           </p>
@@ -353,9 +384,47 @@
         </div>
       </section>
     </div>
-    <div x-show="toast.visible" x-transition x-cloak class="fixed bottom-5 right-5 bg-emerald-700 text-white px-4 py-3 rounded-lg shadow-lg text-sm font-medium z-50">
-        <span x-text="toast.mensaje"></span>
+    <div x-show="modalAbierto" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4">
+      <div @click.away="modalAbierto = false" class="bg-white border border-slate-400 max-w-sm w-full p-6 shadow-xl space-y-4">
+        <h4 class="text-lg font-bold text-slate-900">¿Eliminar cultivo?</h4>
+        <p class="text-sm text-slate-600">Esta acción no se puede deshacer. El cultivo se eliminará permanentemente.</p>
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" @click="modalAbierto = false" class="px-4 py-2 text-sm font-medium text-slate-700 bg-slate-200 hover:bg-slate-300 transition cursor-pointer">
+            Cancelar
+          </button>
+          <button type="button" @click="confirmarEliminar()" class="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 transition cursor-pointer">
+            Eliminar
+          </button>
+        </div>
+      </div>
     </div>
+
+    <div x-show="toast.visible"
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0 translate-y-3"
+         x-transition:enter-end="opacity-100 translate-y-0"
+         x-transition:leave="transition ease-in duration-150"
+         x-transition:leave-start="opacity-100 translate-y-0"
+         x-transition:leave-end="opacity-0 translate-y-3"
+         x-cloak
+         :class="{
+           'bg-emerald-800 text-white': toast.tipo === 'success',
+           'bg-amber-600 text-white': toast.tipo === 'info',
+           'bg-red-700 text-white': toast.tipo === 'error'
+         }"
+         class="fixed bottom-5 right-5 px-4 py-3 rounded-xl shadow-lg text-sm font-medium z-50 flex items-center gap-2.5">
+      <svg x-show="toast.tipo === 'success'" class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+      </svg>
+      <svg x-show="toast.tipo === 'info'" class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+      </svg>
+      <svg x-show="toast.tipo === 'error'" class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <span x-text="toast.mensaje"></span>
+    </div>
+
   </main>
 
   <script type="module">
