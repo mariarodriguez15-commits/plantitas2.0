@@ -1,0 +1,19 @@
+# Dependencias
+node_modules/
+
+# Archivos de editores e IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs y variables de entorno
+*.log
+.env
+.env.local
