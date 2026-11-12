@@ -9,62 +9,83 @@
 </head>
 
 <body class="min-h-screen bg-slate-50 text-slate-800 flex flex-col font-rounded antialiased">
-    <header class="bg-emerald-900 text-white shadow-md sticky top-0 z-50">
+    <header class="bg-emerald-900 text-white shadow-md sticky top-0 z-50" x-data="{ menuAbierto: false }">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-16">
-            <h1 class="text-2xl font-bold tracking-wide text-white leading-none">CultivaWeb</h1>
+
+        <h1 class="text-2xl font-bold tracking-wide text-white leading-none">CultivaWeb</h1>
+
+        <nav class="hidden md:flex items-center gap-2">
+          <a href="panel.html" class="px-3.5 py-2  text-sm font-semibold bg-emerald-800 text-white shadow-inner">
+              Panel principal
+            </a>
+
+          <a href="cultivos.html" class="px-3.5 py-2 text-sm font-medium text-emerald-100 hover:bg-emerald-800/60 hover:text-white transition">
+              Cultivos
+            </a>
+
+          <a href="sensores.html" aria-current="page" class="px-3.5 py-2 text-sm font-semibold bg-emerald-800 text-white shadow-inner">
+              Sensores
+            </a>
+
+          <a href="index.html" class="px-3.5 py-2 text-sm font-medium text-red-200 hover:bg-red-900/40 hover:text-white transition">
+              Cerrar Sesión
+            </a>
+      </nav>
+
+      <div class="flex md:hidden">
+            <button @click="menuAbierto = !menuAbierto" type="button" aria-label="Abrir menú"
+                    class="p-2 rounded-xl text-emerald-200 hover:text-white hover:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-400 ml-auto">
+              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
           </div>
       </div>
 
-      <div class="flex md:hidden">
-          <button id="btnMenu" type="button" aria-expanded="false" aria-label="Abrir menú de navegación"
-                  class="p-2 text-emerald-200 hover:text-white hover:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-600 ml-auto">
-            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-            </svg> 
-          </button>
-        </div>
-        <nav id="menuNavegacion" class="hidden md:hidden py-3 border-t border-emerald-800 flex flex-col space-y-1">
-          <a href="panel.html" aria-current="page"
-             class="px-3 py-2 text-sm font-bold bg-emerald-800 text-white">
-            Inicio
-          </a>
-          <a href="cultivos.html"
-             class="px-3 py-2 text-sm font-semibold text-emerald-100 hover:bg-emerald-800">
-            Cultivos
-          </a>
-          <a href="sensores.html"
-             class="px-3 py-2 text-sm font-semibold text-emerald-100 hover:bg-emerald-800">
-            Sensores
-          </a>
-          <a href="index.html"
-             class="px-3 py-2 text-sm font-semibold text-red-300 hover:bg-red-900/50">
-            Cerrar Sesión
-          </a>
-        </nav>
-
-      <nav class="hidden md:flex items-center justify-end ml-auto">
-      
-        <a href="panel.html" aria-current="page"
-            class="px-4 py-2 text-sm font-bold bg-emerald-800 text-white shadow-inner">
-          Panel principal
+      <nav x-show="menuAbierto"
+           x-transition:enter="transition ease-out duration-200"
+           x-transition:enter-start="opacity-0 -translate-y-2"
+           x-transition:enter-end="opacity-100 translate-y-0"
+           x-transition:leave="transition ease-in duration-150"
+           x-transition:leave-start="opacity-100 translate-y-0"
+           x-transition:leave-end="opacity-0 -translate-y-2"
+           x-cloak
+           class="md:hidden py-3 border-t border-emerald-800 flex flex-col items-end space-y-1">
+        <a href="panel.html"
+           class="w-full text-right px-4 py-2 text-sm font-semibold text-emerald-100 hover:bg-emerald-800">
+          Inicio
         </a>
         <a href="cultivos.html"
-            class="px-4 py-2 text-sm font-semibold text-emerald-100 hover:bg-emerald-800/60 hover:text-white transition">
+           class="w-full text-right px-4 py-2 text-sm font-semibold text-emerald-100 hover:bg-emerald-800">
           Cultivos
         </a>
-        <a href="sensores.html"
-            class="px-4 py-2 text-sm font-semibold text-emerald-100 hover:bg-emerald-800/60 hover:text-white transition">
+        <a href="sensores.html" aria-current="page"
+           class="w-full text-right px-4 py-2 text-sm font-bold bg-emerald-800 text-white">
           Sensores
         </a>
-        <div class="h-5 w-px bg-emerald-700/60 mx-1"></div>
         <a href="index.html"
-            class="px-4 py-2 text-sm font-semibold text-red-200 hover:bg-red-900/40 hover:text-white transition">
+           class="w-full text-right px-4 py-2 text-sm font-semibold text-red-300 hover:bg-red-900/50">
           Cerrar Sesión
         </a>
-      </nav>
+      </nav> 
 
-    </header>
+       <div x-show="toast.visible"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 -translate-y-3"
+         x-transition:enter-end="opacity-100 translate-y-0"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100 translate-y-0"
+         x-transition:leave-end="opacity-0 -translate-y-3"
+         x-cloak
+         :class="toast.tipo === 'exito' ? 'bg-emerald-700 text-white' : 'bg-red-600 text-white'"
+         class="fixed top-20 right-4 sm:right-8 z-50 px-5 py-3 rounded-2xl shadow-xl flex items-center gap-3 font-semibold text-sm">
+      <span x-text="toast.tipo === 'exito' ? '✓' : 'x'"></span>
+      <span x-text="toast.mensaje"></span>
+      <button @click="toast.visible = false" class="ml-2 text-white/80 hover:text-white font-bold cursor-pointer">&times;</button>
+    </div>
+
+  </header>
 
     <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
 
