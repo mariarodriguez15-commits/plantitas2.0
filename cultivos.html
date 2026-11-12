@@ -321,16 +321,18 @@
             </thead>
             <tbody class="divide-y divide-slate-100">
               <template x-for="c in cultivosPaginados" :key="c.id">
-                <td class="px-6 py-3.5 font-medium text-slate-900">
+                <tr class="hover:bg-slate-50/80 transition">
+                  <td class="px-6 py-3.5 font-medium text-slate-900">
                     <a :href="'detalle-cultivo.html?id=' + c.id" class="hover:text-emerald-700 hover:underline transition" x-text="c.nombre"></a>
-                </td>
-                <td class="px-6 py-3.5" x-text="c.tipo"></td>
-                <td class="px-6 py-3.5 text-center" x-text="c.estado"></td>
-                <td class="px-6 py-3.5 text-right space-x-3">
-                  <a :href="'detalle-cultivo.html?id=' + c.id" class="text-xs text-blue-700 hover:text-blue-900 font-semibold">Detalle</a>
-                  <button @click="prepararEdicion(c)" class="text-xs text-emerald-700 hover:text-emerald-900 font-semibold cursor-pointer">Editar</button>
-                  <button @click="abrirModal(c.id)" class="text-xs text-red-600 hover:text-red-800 font-semibold cursor-pointer">Eliminar</button>
-                </td>
+                  </td>
+                  <td class="px-6 py-3.5" x-text="c.tipo"></td>
+                  <td class="px-6 py-3.5 text-center" x-text="c.estado"></td>
+                  <td class="px-6 py-3.5 text-right space-x-3">
+                    <a :href="'detallecultivo.html?id=' + c.id" class="text-xs text-blue-700 hover:text-blue-900 font-semibold">Detalle</a>
+                    <button @click="prepararEdicion(c)" class="text-xs text-emerald-700 hover:text-emerald-900 font-semibold cursor-pointer">Editar</button>
+                    <button @click="abrirModal(c.id)" class="text-xs text-red-600 hover:text-red-800 font-semibold cursor-pointer">Eliminar</button>
+                  </td>
+                </tr>
               </template>
               <tr x-show="cultivosFiltrados.length === 0">
                 <td colspan="4" class="px-6 py-8 text-center text-slate-400 italic">No se encontraron cultivos.</td>
