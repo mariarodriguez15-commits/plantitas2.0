@@ -78,17 +78,16 @@
         <div class="flex flex-col sm:flex-row sm:items-center gap-3">
           <div class="relative">
             <label for="busquedaCultivo" class="sr-only">Buscar por nombre</label>
-            <input type="text" id="busquedaCultivo" x-model.trim="busqueda" placeholder="Buscar cultivo..."
-                   class="w-full sm:w-56 border border-slate-400 bg-white px-3.5 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
+            <input type="text" id="busquedaCultivo" x-model.trim="busqueda" placeholder="Buscar cultivo..." class="w-full sm:w-56 border border-slate-400 bg-white px-3.5 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
           </div>
 
           <div>
             <label for="filtroEstado" class="sr-only">Filtrar por estado</label>
-            <select id="filtroEstado" x-model="filtroEstado"
+            <select id="filtroEstado" x-model="filtroEstado" @change="paginaActual = 1"
                     class="w-full sm:w-auto border border-slate-400 bg-white px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
               <option value="Todos">Todos los estados</option>
-              <option value="Cosechado">Listo para cosecha</option>
               <option value="En crecimiento">En crecimiento</option>
+              <option value="Listo para cosecha">Listo para cosecha</option>
               <option value="Cosechado">Cosechado</option>
               
             </select>
@@ -96,7 +95,7 @@
 
           <div>
             <label for="filtroTipo" class="sr-only">Filtrar por tipo</label>
-            <select id="filtroTipo" x-model="filtroTipo"
+            <select id="filtroTipo" x-model="filtroTipo" @change="paginaActual = 1"
                     class="w-full sm:w-auto border border-slate-400 bg-white px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
               <option value="Todos">Todos los tipos</option>
               <template x-for="tipo in tiposDisponibles" :key="tipo">
@@ -151,8 +150,8 @@
             <select id="estadoCultivo" x-model="formCultivo.estado"
                     class="w-full border border-slate-400 bg-white px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
               <option value="En crecimiento">En crecimiento</option>
+              <option value="Listo para cosecha">Listo para cosecha</option>
               <option value="Cosechado">Cosechado</option>
-              <option value="Cosechado">Listo para cosecha</option>
             </select>
           </div>
 
@@ -169,6 +168,36 @@
           </div>
         </form>
       </section>
+
+      <section class="bg-white  border border-slate-500 shadow-sm overflow-hidden" x-data="{ acordeonAbierto: null }">
+          <div class="px-5 py-3.5 bg-slate-50 border-b border-slate-200 flex items-center gap-2">
+            <svg class="w-4 h-4 text-emerald-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <h4 class="text-sm font-bold text-slate-800">Guía de Estados</h4>
+          </div>
+
+          <div class="divide-y divide-slate-200">
+            <!-- Item 1 -->
+            <div>
+              <button type="button"
+                      @click="acordeonAbierto = acordeonAbierto === 1 ? null : 1"
+                      class="w-full px-5 py-3 text-left text-sm font-medium text-slate-700 hover:bg-slate-50 flex items-center justify-between transition cursor-pointer">
+                <span>Significado de los estados</span>
+                <svg class="w-4 h-4 text-slate-400 transition-transform duration-200"
+                     :class="acordeonAbierto === 1 ? 'rotate-180 text-emerald-700' : ''"
+                     fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              <div x-show="acordeonAbierto === 1" x-cloak class="px-5 pb-3.5 text-xs text-slate-600 space-y-1.5 leading-relaxed">
+                <p><strong class="text-emerald-700">Listo para la cosecha:</strong> Cultivo listo para ser cosechado.</p>
+                <p><strong class="text-blue-700">En crecimiento:</strong> Etapa inicial o vegetativa previa a floración.</p>
+                <p><strong class="text-slate-700">Cosechado:</strong> Ciclo finalizado y registrado en historial.</p>
+              </div>
+            </div>
+          </div>
+        </section>
 
       <section class="bg-white border border-slate-500 overflow-hidden lg:col-span-2">
         <div class="p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-slate-100">
@@ -192,7 +221,7 @@
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100">
-              <template x-for="c in cultivosFiltrados" :key="c.id">
+              <template x-for="c in cultivosPaginados" :key="c.id">
                 <tr class="hover:bg-slate-50/80 transition" :class="editandoId === c.id ? 'bg-amber-50/50' : ''">
                   <td class="px-6 py-3.5 font-medium text-slate-900" x-text="c.nombre"></td>
                   <td class="px-6 py-3.5" x-text="c.tipo"></td>
@@ -227,6 +256,45 @@
             </tbody>
           </table>
         </div>
+        <div x-show="cultivosFiltrados.length > 0"
+             class="px-6 py-3.5 bg-slate-50/70 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <p class="text-xs text-slate-500">
+            Mostrando
+            <span class="font-semibold text-slate-700" x-text="indiceInicio + 1"></span>
+            a
+            <span class="font-semibold text-slate-700" x-text="Math.min(indiceFin, cultivosFiltrados.length)"></span>
+            de
+            <span class="font-semibold text-slate-700" x-text="cultivosFiltrados.length"></span>
+            resultados
+          </p>
+
+          <div class="inline-flex items-center gap-1">
+            <button type="button"
+                    @click="paginaActual--"
+                    :disabled="paginaActual === 1"
+                    class="px-2.5 py-1.5 rounded-lg text-xs font-medium border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition">
+              Anterior
+            </button>
+
+            <template x-for="num in totalPaginas" :key="num">
+              <button type="button"
+                      @click="paginaActual = num"
+                      :class="paginaActual === num
+                        ? 'bg-emerald-800 text-white border-emerald-800 font-bold'
+                        : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50 font-medium'"
+                      class="w-8 h-8 rounded-lg text-xs border transition cursor-pointer"
+                      x-text="num">
+              </button>
+            </template>
+
+            <button type="button"
+                    @click="paginaActual++"
+                    :disabled="paginaActual >= totalPaginas"
+                    class="px-2.5 py-1.5 rounded-lg text-xs font-medium border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition">
+              Siguiente
+            </button>
+          </div>
+        </div>
       </section>
     </div>
     <div x-show="toast.visible" x-transition x-cloak class="fixed bottom-5 right-5 bg-emerald-900 text-white px-4 py-3 rounded-lg shadow-lg text-sm font-medium z-50">
@@ -243,6 +311,8 @@
         filtroTipo: 'Todos',
         editandoId: null,
         enviando: false,
+        paginaActual: 1,
+        itemsPorPagina: 5,
 
         formCultivo: {
           nombre: '',
@@ -272,7 +342,7 @@
                   id: item.id || Date.now() + idx,
                   nombre: item.nombre || '',
                   tipo: item.tipo || '',
-                  estado: item.estado || 'Activo'
+                  estado: item.estado || 'Listo para cosecha'
                 }));
                 this.guardarEnStorage();
                 return;
@@ -283,7 +353,7 @@
           }
 
           this.cultivos = [
-            { id: 101, nombre: 'Cultivo de Maíz', tipo: 'Maíz', estado: 'En crecimientoivo' },
+            { id: 101, nombre: 'Cultivo de Maíz', tipo: 'Maíz', estado: 'En crecimiento' },
             { id: 102, nombre: 'Cultivo de Ají', tipo: 'Ají', estado: 'Listo para cosecha' },
           ];
           this.guardarEnStorage();
@@ -303,10 +373,30 @@
           });
         },
 
+        get totalPaginas() {
+          return Math.max(1, Math.ceil(this.cultivosFiltrados.length / this.itemsPorPagina));
+        },
+
+        get indiceInicio() {
+          return (this.paginaActual - 1) * this.itemsPorPagina;
+        },
+
+        get indiceFin() {
+          return this.indiceInicio + this.itemsPorPagina;
+        },
+
+        get cultivosPaginados() {
+          if (this.paginaActual > this.totalPaginas) {
+            this.paginaActual = this.totalPaginas;
+          }
+          return this.cultivosFiltrados.slice(this.indiceInicio, this.indiceFin);
+        },
+
         limpiarFiltros() {
           this.busqueda = '';
           this.filtroEstado = 'Todos';
           this.filtroTipo = 'Todos';
+          this.paginaActual = 1;
         },
 
         validarFormulario() {
@@ -386,7 +476,7 @@
           this.formCultivo = {
             nombre: '',
             tipo: '',
-            estado: 'Activo'
+            estado: 'En crecimiento'
           };
           this.errores = { nombre: '', tipo: '' };
         },
